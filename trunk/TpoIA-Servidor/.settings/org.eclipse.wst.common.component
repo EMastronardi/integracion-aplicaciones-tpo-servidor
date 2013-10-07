@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="TpoIA-Servidor">
+        <wb-resource deploy-path="/" source-path="/ejbModule" tag="defaultRootSource"/>
+        <property name="java-output-path" value="/TpoIA-Servidor/build/classes"/>
+        <property name="ClientProject" value="TpoIA-ServidorClient"/>
+        <property name="ClientJARURI" value="TpoIA-ServidorClient.jar"/>
+    </wb-module>
+</project-modules>
