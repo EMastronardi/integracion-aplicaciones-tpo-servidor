@@ -14,6 +14,7 @@ import javax.persistence.Table;
 @MappedSuperclass
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="moduloDescrip", discriminatorType= DiscriminatorType.STRING)
+@Table(name="modulos")
 public abstract class Modulo {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)

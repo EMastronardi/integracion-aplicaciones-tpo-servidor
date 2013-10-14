@@ -1,10 +1,12 @@
 package entities;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -14,7 +16,8 @@ public class Articulo {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int nroArticulo;
 	private String nombre;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
+	@PrimaryKeyJoinColumn
 	private Deposito deposito;
 	
 	public int getNroArticulo() {
