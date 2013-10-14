@@ -1,10 +1,27 @@
 package entities;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Table;
+
+@MappedSuperclass
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="moduloDescrip", discriminatorType= DiscriminatorType.STRING)
 public abstract class Modulo {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int idModulo;
 	private String ip;
 	private String nombre;
 	private String codigo;
+	
 	public int getIdModulo() {
 		return idModulo;
 	}

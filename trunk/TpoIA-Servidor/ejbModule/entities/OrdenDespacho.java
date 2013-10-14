@@ -3,11 +3,23 @@ package entities;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name ="OrdenesDespacho")
 public class OrdenDespacho {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int nroDespacho;
 	private int nroVenta;
 	private Modulo modulo;
 	private Date fecha;
+	
+	
 	private ArrayList<ItemOrdenDespacho> itemsDespacho;
 	private String estado;
 	public int getNroDespacho() {

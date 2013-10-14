@@ -1,9 +1,18 @@
 package entities;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="itemsOD")
 public class ItemOrdenDespacho {
+	@OneToOne
 	private Articulo articulo;
 	private int cantidad;
 	private int solicitudArticulo;
+	
+	
 	public Articulo getArticulo() {
 		return articulo;
 	}
