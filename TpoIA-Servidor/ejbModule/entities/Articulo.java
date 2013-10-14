@@ -1,10 +1,22 @@
 package entities;
 
-public class Articulo {
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
+@Entity
+@Table(name= "Articulos")
+public class Articulo {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int nroArticulo;
 	private String nombre;
+	@OneToOne
 	private Deposito deposito;
+	
 	public int getNroArticulo() {
 		return nroArticulo;
 	}

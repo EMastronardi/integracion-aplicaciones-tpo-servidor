@@ -1,9 +1,26 @@
 package entities;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="Usuarios")
 public class Usuario {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int idUsuario;
 	private String nombre;
 	private String password;
+	
+	public Usuario(int idUsuario, String nombre, String password) {
+		this.idUsuario = idUsuario;
+		this.nombre = nombre;
+		this.password = password;
+	}
+	
 	public int getIdUsuario() {
 		return idUsuario;
 	}
@@ -22,10 +39,4 @@ public class Usuario {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public Usuario(int idUsuario, String nombre, String password) {
-		this.idUsuario = idUsuario;
-		this.nombre = nombre;
-		this.password = password;
-	}
-	
 }
