@@ -43,6 +43,4 @@ public class ItemOrdenDespacho {
 		this.cantidad = cantidad;
 		this.solicitudArticulo = solicitudArticulo;
 	}
-	
-
 }
