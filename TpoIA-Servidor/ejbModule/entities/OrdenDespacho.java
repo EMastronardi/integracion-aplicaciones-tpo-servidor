@@ -3,10 +3,16 @@ package entities;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -14,12 +20,15 @@ import javax.persistence.Table;
 public class OrdenDespacho {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name ="idDespacho")
 	private int nroDespacho;
 	private int nroVenta;
+	@OneToOne(cascade = CascadeType.ALL)
+	@PrimaryKeyJoinColumn
 	private Modulo modulo;
 	private Date fecha;
-	
-	
+	@OneToMany
+	@JoinColumn(name = "idDespacho")
 	private ArrayList<ItemOrdenDespacho> itemsDespacho;
 	private String estado;
 	public int getNroDespacho() {
