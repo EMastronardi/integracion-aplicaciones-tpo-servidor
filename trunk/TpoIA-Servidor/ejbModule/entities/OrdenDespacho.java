@@ -2,6 +2,7 @@ package entities;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,9 +28,9 @@ public class OrdenDespacho {
 	@PrimaryKeyJoinColumn
 	private Modulo modulo;
 	private Date fecha;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idDespacho")
-	private ArrayList<ItemOrdenDespacho> itemsDespacho;
+	private List<ItemOrdenDespacho> itemsDespacho;
 	private String estado;
 	public int getNroDespacho() {
 		return nroDespacho;
@@ -55,7 +56,7 @@ public class OrdenDespacho {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	public ArrayList<ItemOrdenDespacho> getItemsDespacho() {
+	public List<ItemOrdenDespacho> getItemsDespacho() {
 		return itemsDespacho;
 	}
 	public void setItemsDespacho(ArrayList<ItemOrdenDespacho> itemsDespacho) {

@@ -11,11 +11,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
-@MappedSuperclass
+@Entity
+@Table(name="modulos")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="moduloDescrip", discriminatorType= DiscriminatorType.STRING)
-@Table(name="modulos")
-public abstract class Modulo {
+
+public class Modulo {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int idModulo;
