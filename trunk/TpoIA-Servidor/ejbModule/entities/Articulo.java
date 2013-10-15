@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -18,7 +19,7 @@ public class Articulo {
 	private int nroArticulo;
 	private String nombre;
 	@OneToOne(cascade = CascadeType.ALL)
-	@Column(name="idDeposito")
+	@JoinColumn(name="idDeposito")
 	private Deposito deposito;
 	
 	public int getNroArticulo() {

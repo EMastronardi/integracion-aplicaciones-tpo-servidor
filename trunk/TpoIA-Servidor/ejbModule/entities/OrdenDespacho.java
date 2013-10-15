@@ -26,7 +26,7 @@ public class OrdenDespacho {
 	@Column(name="idVenta")
 	private int nroVenta;
 	@OneToOne(cascade = CascadeType.ALL)
-	@Column(name="idModulo")
+	@JoinColumn(name="idModulo")
 	private Modulo modulo;
 	private Date fecha;
 	@OneToMany(cascade = CascadeType.ALL)
