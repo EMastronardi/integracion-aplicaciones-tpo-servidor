@@ -23,9 +23,10 @@ public class OrdenDespacho {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name ="idDespacho")
 	private int nroDespacho;
+	@Column(name="idVenta")
 	private int nroVenta;
 	@OneToOne(cascade = CascadeType.ALL)
-	@PrimaryKeyJoinColumn
+	@Column(name="idModulo")
 	private Modulo modulo;
 	private Date fecha;
 	@OneToMany(cascade = CascadeType.ALL)

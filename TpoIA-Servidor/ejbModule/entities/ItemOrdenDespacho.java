@@ -4,16 +4,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
-@Entity(name="itemsod")
+@Entity(name="ItemsOrdenesDespacho")
 public class ItemOrdenDespacho {
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-	private int idtemOD;
+	private int iditemOrdenDespacho;
 	@ManyToOne
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name="idArticulo")
 	private Articulo articulo;
 	private int cantidad;
 	private int solicitudArticulo;
