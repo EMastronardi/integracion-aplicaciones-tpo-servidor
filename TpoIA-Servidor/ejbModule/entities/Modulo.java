@@ -12,9 +12,9 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="modulos")
+@Table(name="Modulos")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="moduloDescrip", discriminatorType= DiscriminatorType.STRING)
+@DiscriminatorColumn(name="tipo", discriminatorType= DiscriminatorType.STRING)
 
 public class Modulo {
 	@Id
