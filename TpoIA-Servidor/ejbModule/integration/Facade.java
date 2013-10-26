@@ -28,9 +28,9 @@ public class Facade implements FacadeRemote {
 	}
 
 	@Override
-	public boolean createUser(UsuarioVO usuario) {
+	public boolean createUser(String username, String password) {
 		// TODO Auto-generated method stub
-		return adminUser.agregarUsuario(usuario);
+		return adminUser.agregarUsuario(String username, String password);
 	}
 
 }
