@@ -12,13 +12,13 @@ import valueObjects.UsuarioVO;
  */
 @Stateless
 @LocalBean
-public class Facade implements FacadeRemote {
+public class FacadeRemoteBean implements FacadeRemote {
 	@EJB(beanName = "AdministrarUsuariosBean")
 	private AdministrarUsuarios adminUser;
     /**
      * Default constructor. 
      */
-    public Facade() {
+    public FacadeRemoteBean() {
         // TODO Auto-generated constructor stub
     }
 	@Override
