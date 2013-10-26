@@ -5,6 +5,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import entities.Usuario;
 import valueObjects.UsuarioVO;
 
 /**
@@ -24,21 +25,40 @@ public class AdministrarUsuariosBean implements AdministrarUsuarios {
     }
 
 	@Override
-	public boolean agregarUsuario(UsuarioVO usuario) {
+	public boolean agregarUsuario(UsuarioVO usuarioVo) {
 		// TODO Auto-generated method stub
-		
-		return false;
+		Usuario usuario = new Usuario(usuarioVo.getIdUsuario(), usuarioVo.getNombre(), usuarioVo.getPassword());
+		try{
+			em.persist(usuario);
+			return true;
+		}catch( Exception e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override
-	public boolean eliminarUsuario(UsuarioVO usuario) {
+	public boolean eliminarUsuario(UsuarioVO usuarioVo) {
 		// TODO Auto-generated method stub
-		return false;
+		try{
+			Usuario usuario =(Usuario) em.find(Usuario.class, usuarioVo.getIdUsuario());
+			em.remove(usuario);
+			return true;
+		}catch( Exception e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override
 	public boolean loginUsuario(String username, String password) {
 		// TODO Auto-generated method stub
+		try{
+			
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
 		return false;
 	}
 
