@@ -12,7 +12,7 @@ import valueObjects.UsuarioVO;
  */
 @Stateless
 @LocalBean
-public class FacadeRemoteBean implements FacadeRemote {
+public class FacadeRemoteBean implements FacadeRemote,FacadeLocal {
 	@EJB(beanName = "AdministrarUsuariosBean")
 	private AdministrarUsuarios adminUser;
     /**
