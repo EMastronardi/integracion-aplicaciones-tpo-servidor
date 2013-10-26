@@ -25,9 +25,10 @@ public class AdministrarUsuariosBean implements AdministrarUsuarios {
     }
 
 	@Override
-	public boolean agregarUsuario(UsuarioVO usuarioVo) {
+	public boolean agregarUsuario(String username, String password) {
 		// TODO Auto-generated method stub
-		Usuario usuario = new Usuario(usuarioVo.getIdUsuario(), usuarioVo.getNombre(), usuarioVo.getPassword());
+		
+		Usuario usuario = new Usuario(username,password);
 		try{
 			em.persist(usuario);
 			return true;
