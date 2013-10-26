@@ -30,7 +30,7 @@ public class Facade implements FacadeRemote {
 	@Override
 	public boolean createUser(String username, String password) {
 		// TODO Auto-generated method stub
-		return adminUser.agregarUsuario(String username, String password);
+		return adminUser.agregarUsuario(username,password);
 	}
 
 }
