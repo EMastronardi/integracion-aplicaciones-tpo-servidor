@@ -11,8 +11,7 @@ import valueObjects.UsuarioVO;
  * Session Bean implementation class Facade
  */
 @Stateless
-@LocalBean
-public class FacadeRemoteBean implements FacadeRemote,FacadeLocal {
+public class FacadeRemoteBean implements FacadeRemote {
 	@EJB(beanName = "AdministrarUsuariosBean")
 	private AdministrarUsuarios adminUser;
     /**
