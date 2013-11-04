@@ -20,6 +20,11 @@ public class Usuario {
 		this.password = password;
 	}
 	
+	
+	public Usuario() {
+	}
+
+
 	public int getIdUsuario() {
 		return idUsuario;
 	}

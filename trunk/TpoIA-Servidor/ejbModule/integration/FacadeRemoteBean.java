@@ -28,9 +28,9 @@ public class FacadeRemoteBean implements FacadeRemote {
         // TODO Auto-generated constructor stub
     }
 	@Override
-	public boolean loginUser(String username, String password) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean validarUsuario(String username, String password) {
+		// validar el usuario que intenta loguear en el sistema
+		return adminUser.validarUsuario(username, password);
 	}
 
 	@Override
@@ -48,4 +48,5 @@ public class FacadeRemoteBean implements FacadeRemote {
 			return "Error al procesarOrdenDespacho";
 		}
 	}
+	
 }
