@@ -22,6 +22,9 @@ public class Articulo {
 	@JoinColumn(name="idDeposito")
 	private Deposito deposito;
 	
+	public Articulo(){
+		
+	}
 	public int getNroArticulo() {
 		return nroArticulo;
 	}

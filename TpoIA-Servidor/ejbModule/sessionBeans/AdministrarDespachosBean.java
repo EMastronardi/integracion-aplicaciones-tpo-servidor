@@ -16,17 +16,19 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 	@PersistenceContext
 	private EntityManager em;
+
 	/**
 	 * Default constructor.
 	 */
-    public AdministrarDespachosBean() {
-        // TODO Auto-generated constructor stub
-    }
-    public String procesarSolicitudDespacho(String xml){
-    	//Aca hay que procesar el xml y hacer lo que haya que hacer.
-    	XStream xstream = new XStream();
-    	OrdenDespacho od = (OrdenDespacho)xstream.fromXML(xml);
-    	return "";
-    }
+	public AdministrarDespachosBean() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public String procesarSolicitudDespacho(String xml) {
+		// Aca hay que procesar el xml y hacer lo que haya que hacer.
+		XStream xstream = new XStream();
+		OrdenDespacho od = (OrdenDespacho) xstream.fromXML(xml);
+		return "";
+	}
 
 }
