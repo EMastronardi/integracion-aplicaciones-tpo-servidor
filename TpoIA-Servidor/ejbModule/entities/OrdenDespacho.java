@@ -33,9 +33,15 @@ public class OrdenDespacho {
 	@JoinColumn(name = "idDespacho")
 	private List<ItemOrdenDespacho> itemsDespacho;
 	private String estado;
+	
+	
+	public OrdenDespacho() {
+	}
+
 	public int getNroDespacho() {
 		return nroDespacho;
 	}
+
 	public void setNroDespacho(int nroDespacho) {
 		this.nroDespacho = nroDespacho;
 	}

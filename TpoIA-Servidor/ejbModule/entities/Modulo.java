@@ -23,6 +23,8 @@ public class Modulo {
 	private String ip;
 	private String nombre;
 	private String codigo;
+	public Modulo() {
+	}
 	
 	public int getIdModulo() {
 		return idModulo;

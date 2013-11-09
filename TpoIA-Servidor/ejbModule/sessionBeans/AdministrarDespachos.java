@@ -1,9 +1,9 @@
 package sessionBeans;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
-@Remote
+@Local
 public interface AdministrarDespachos {
-	public String procesarSolicitudDespacho(String xml);
+	public String procesarSolicitudDespacho(String valorXml);
 
 }
