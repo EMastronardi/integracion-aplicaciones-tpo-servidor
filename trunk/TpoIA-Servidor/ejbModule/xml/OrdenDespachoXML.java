@@ -8,7 +8,7 @@ public class OrdenDespachoXML {
 	private int nroVenta;
 	private int idModulo;
 	private Date fecha;
-	private List<itemXML> items;
+	private List<ItemXML> items;
 	public int getNroDespacho() {
 		return nroDespacho;
 	}
@@ -33,10 +33,10 @@ public class OrdenDespachoXML {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	public List<itemXML> getItems() {
+	public List<ItemXML> getItems() {
 		return items;
 	}
-	public void setItems(List<itemXML> items) {
+	public void setItems(List<ItemXML> items) {
 		this.items = items;
 	}
 
