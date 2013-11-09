@@ -20,6 +20,8 @@ public class ItemOrdenDespacho {
 	private int solicitudArticulo;
 	
 	
+	public ItemOrdenDespacho() {
+	}
 	public Articulo getArticulo() {
 		return articulo;
 	}

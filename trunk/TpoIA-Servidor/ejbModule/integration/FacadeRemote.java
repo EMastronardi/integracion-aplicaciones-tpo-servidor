@@ -8,4 +8,5 @@ import valueObjects.UsuarioVO;
 public interface FacadeRemote {
 	public boolean createUser(String username, String password);
 	public boolean validarUsuario(String usuario, String password);
+	public boolean validarUsuarioLogueado(String usuario);
 }

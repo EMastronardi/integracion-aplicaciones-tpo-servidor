@@ -1,14 +1,18 @@
 package integration;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import sessionBeans.AdministrarDespachos;
 import sessionBeans.AdministrarUsuarios;
 import valueObjects.UsuarioVO;
+import xml.OrdenDespachoXML;
 
 /**
  * Session Bean implementation class Facade
@@ -18,35 +22,42 @@ import valueObjects.UsuarioVO;
 public class FacadeRemoteBean implements FacadeRemote {
 	@EJB(beanName = "AdministrarUsuariosBean")
 	private AdministrarUsuarios adminUser;
-	
+
 	@EJB(beanName = "AdministrarDespachosBean")
 	private AdministrarDespachos adminOD;
-    /**
-     * Default constructor. 
-     */
-    public FacadeRemoteBean() {
-        // TODO Auto-generated constructor stub
-    }
-	@Override
+
+	public FacadeRemoteBean() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@WebMethod(exclude=true)
 	public boolean validarUsuario(String username, String password) {
 		// validar el usuario que intenta loguear en el sistema
 		return adminUser.validarUsuario(username, password);
 	}
 
-	@Override
+	@WebMethod(exclude=true)
 	public boolean createUser(String username, String password) {
 		// TODO Auto-generated method stub
-		return adminUser.agregarUsuario(username,password);
+		return adminUser.agregarUsuario(username, password);
 	}
-	//WebServices
+
+	// WebServices
 	@WebMethod
-	public String procesarOrdenDespacho(String orden){
+	public String procesarOrdenDespacho(String  valorXml) {
 		try {
-			return adminOD.procesarSolicitudDespacho(orden);
-			
+			return adminOD.procesarSolicitudDespacho(valorXml);
+
 		} catch (Exception e) {
 			return "Error al procesarOrdenDespacho";
 		}
 	}
-	
+
+
+	@WebMethod(exclude=true)
+	public boolean validarUsuarioLogueado(String usuario) {
+
+		return false;
+	}
+
 }
