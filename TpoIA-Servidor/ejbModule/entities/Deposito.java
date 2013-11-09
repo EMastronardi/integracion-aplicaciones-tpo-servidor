@@ -6,9 +6,12 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue(value="deposito")
 public class Deposito extends Modulo {
-	public Deposito(int idModulo, String ip, String nombre, String codigo) {
-		super(idModulo, ip, nombre, codigo);
+	public Deposito(int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination) {
+		super(idModulo, ip, nombre, codigo, usuario, password, jmsDestination);
+		
 		
 	}
+	
+	
 
 }
