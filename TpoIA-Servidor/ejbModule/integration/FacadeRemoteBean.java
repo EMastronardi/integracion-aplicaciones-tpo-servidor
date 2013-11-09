@@ -10,6 +10,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import sessionBeans.AdministrarDespachos;
+import sessionBeans.AdministrarSistema;
 import sessionBeans.AdministrarUsuarios;
 import valueObjects.UsuarioVO;
 import xml.OrdenDespachoXML;
@@ -20,12 +21,16 @@ import xml.OrdenDespachoXML;
 @Stateless
 @WebService
 public class FacadeRemoteBean implements FacadeRemote {
+	
 	@EJB(beanName = "AdministrarUsuariosBean")
 	private AdministrarUsuarios adminUser;
 
 	@EJB(beanName = "AdministrarDespachosBean")
 	private AdministrarDespachos adminOD;
 
+	@EJB(beanName = "AdministrarSistema")
+	private AdministrarSistema adminSis;
+	
 	public FacadeRemoteBean() {
 		// TODO Auto-generated constructor stub
 	}

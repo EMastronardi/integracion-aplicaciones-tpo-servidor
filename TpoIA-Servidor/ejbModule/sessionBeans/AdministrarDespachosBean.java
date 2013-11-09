@@ -1,15 +1,19 @@
 package sessionBeans;
 
+import integration.FacadeRemoteBean;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.naming.Context;
@@ -19,7 +23,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import xml.OrdenDespachoXML;
-import xml.itemXML;
+import xml.ItemXML;
+import xml.SolicitudXML;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -54,12 +59,12 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		od.setEstado("Pendiente");
 		
 		//Armar ItemsOrdenDespacho
-		List<itemXML> itmsXml  = odXml.getItems();
+		List<ItemXML> itmsXml  = odXml.getItems();
 		
 		ArrayList<ItemOrdenDespacho> itemsDespacho = new ArrayList<ItemOrdenDespacho>();
-		for (itemXML itm : itmsXml) {
+		for (ItemXML itm : itmsXml) {
 						
-			Articulo art = (Articulo)em.find(Articulo.class, itm.getCodigoArticulo());
+			Articulo art = (Articulo)em.find(Articulo.class, itm.getCodigo());
 			if(art != null){
 				ItemOrdenDespacho iod = new ItemOrdenDespacho();
 				iod.setArticulo(art);
@@ -93,9 +98,9 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		//a que deposito
 		
 		String DEFAULT_CONNECTION_FACTORY = "jms/RemoteConnectionFactory";
-		String DEFAULT_DESTINATION = art.getDeposito().getJmsDestination();//"jms/queue/test";
-		String DEFAULT_USERNAME = art.getDeposito().getUsuario();//"test";
-		String DEFAULT_PASSWORD = art.getDeposito().getPassword();//"test123";
+		String DEFAULT_DESTINATION = "queue/procesarOrdenDespacho";//"jms/queue/test";
+		String DEFAULT_USERNAME = "prod";//art.getDeposito().getUsuario();//"test";
+		String DEFAULT_PASSWORD = "prod1234";//art.getDeposito().getPassword();//"test123";
 		String INITIAL_CONTEXT_FACTORY = "org.jboss.naming.remote.client.InitialContextFactory";
 		String PROVIDER_URL = "remote://"+art.getDeposito().getIp()+":4447";
 		
@@ -128,14 +133,27 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
         producer = session.createProducer(destination);
         connection.start();
 		// crear un mensaje de tipo text y setearle el contenido
-		TextMessage message = session.createTextMessage();
-		message.setText("Hola Mundoooooooo");
+        TextMessage message = session.createTextMessage();
+		
+        XStream xstream = new XStream();
+        SolicitudXML sxml = new SolicitudXML();
+        
+
+        sxml.setIdModulo(AdministrarSistema.);
+        
+        String xml armarXml(art, cantidad);
+		message.setText(xml);
 		// enviar el mensaje
 		producer.send(message);
 		connection.close();
 
 		return "";
 
+	}
+
+	private String getIdModulo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
