@@ -15,6 +15,11 @@ import sessionBeans.AdministrarUsuarios;
 import valueObjects.UsuarioVO;
 import xml.OrdenDespachoXML;
 
+import sessionBeans.AdministradorArticulos;
+import sessionBeans.AdministradorModulos;
+import entities.Articulo;
+import entities.Modulo;
+
 /**
  * Session Bean implementation class Facade
  */
@@ -27,10 +32,16 @@ public class FacadeRemoteBean implements FacadeRemote {
 
 	@EJB(beanName = "AdministrarDespachosBean")
 	private AdministrarDespachos adminOD;
-
+	
 	@EJB(beanName = "AdministrarSistema")
 	private AdministrarSistema adminSis;
 	
+	@EJB(beanName = "AdministradorModulosBean")
+	private AdministradorModulos adminMod;
+	
+	@EJB(beanName = "AdministradorArticulos")
+	private AdministradorArticulos amdinArt;
+
 	public FacadeRemoteBean() {
 		// TODO Auto-generated constructor stub
 	}
@@ -63,6 +74,18 @@ public class FacadeRemoteBean implements FacadeRemote {
 	public boolean validarUsuarioLogueado(String usuario) {
 
 		return false;
+	}
+
+	@Override
+	public Modulo getModulo(int idModulo) {
+		// TODO Auto-generated method stub
+		return this.adminMod.getModulo(idModulo);
+	}
+
+	@Override
+	public boolean addArticulo(Articulo articulo) {
+		// TODO Auto-generated method stub
+		return this.addArticulo(articulo);
 	}
 
 }
