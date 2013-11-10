@@ -1,5 +1,6 @@
 package xml;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SolicitudXML {
@@ -35,6 +36,12 @@ public class SolicitudXML {
 	}
 	public void setArticulos(List<ItemXML> articulos) {
 		this.articulos = articulos;
+	}
+	public void addArticulo(int nroArticulo, int cantidad) {
+		if(articulos != null){
+			articulos = new ArrayList<ItemXML>();
+		}
+		articulos.add(new ItemXML(nroArticulo, cantidad));
 	}
 	
 }
