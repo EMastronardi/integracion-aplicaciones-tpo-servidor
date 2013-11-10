@@ -22,7 +22,7 @@ public class OrdenDespacho {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name ="idDespacho")
-	private int nroDespacho;
+	private int nroOrdenDespacho;
 	@Column(name="idVenta")
 	private int nroVenta;
 	@OneToOne(cascade = CascadeType.ALL)
@@ -38,12 +38,12 @@ public class OrdenDespacho {
 	public OrdenDespacho() {
 	}
 
-	public int getNroDespacho() {
-		return nroDespacho;
+	public int getNroOrdenDespacho() {
+		return nroOrdenDespacho;
 	}
 
-	public void setNroDespacho(int nroDespacho) {
-		this.nroDespacho = nroDespacho;
+	public void setNroOrdenDespacho(int nroDespacho) {
+		this.nroOrdenDespacho = nroDespacho;
 	}
 	public int getNroVenta() {
 		return nroVenta;
@@ -78,7 +78,7 @@ public class OrdenDespacho {
 	public OrdenDespacho(int nroDespacho, int nroVenta, Modulo modulo,
 			Date fecha, ArrayList<ItemOrdenDespacho> itemsDespacho,
 			String estado) {
-		this.nroDespacho = nroDespacho;
+		this.nroOrdenDespacho = nroDespacho;
 		this.nroVenta = nroVenta;
 		this.modulo = modulo;
 		this.fecha = fecha;
