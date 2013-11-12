@@ -12,6 +12,8 @@ public class Deposito extends Modulo {
 		
 	}
 	
-	
+	public Deposito(){
+		
+	}
 
 }
