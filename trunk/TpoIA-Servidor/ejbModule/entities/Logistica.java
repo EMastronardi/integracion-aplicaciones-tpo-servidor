@@ -12,5 +12,8 @@ public class Logistica extends Modulo {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Logistica(){
+		
+	}
 
 }
