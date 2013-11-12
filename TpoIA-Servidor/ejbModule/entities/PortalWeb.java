@@ -11,4 +11,7 @@ public class PortalWeb extends Modulo {
 		// TODO Auto-generated constructor stub
 	}
 
+	public PortalWeb(){
+		
+	}
 }
