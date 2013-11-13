@@ -1,5 +1,7 @@
 package entities;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name= "Articulos")
-public class Articulo {
+public class Articulo  implements Serializable {
 	@Id
 	@Column(name="idArticulo")
 	private int nroArticulo;
