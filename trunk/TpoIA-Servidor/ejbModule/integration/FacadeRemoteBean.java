@@ -1,23 +1,17 @@
 package integration;
 
-import java.util.List;
-
 import javax.ejb.EJB;
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.jws.WebService;
-
-import sessionBeans.AdministrarDespachos;
-import sessionBeans.AdministrarSistema;
-import sessionBeans.AdministrarUsuarios;
-import valueObjects.UsuarioVO;
-import xml.OrdenDespachoXML;
 
 import sessionBeans.AdministradorArticulos;
 import sessionBeans.AdministradorModulos;
+import sessionBeans.AdministrarDespachos;
+import sessionBeans.AdministrarSistema;
+import sessionBeans.AdministrarUsuarios;
 import entities.Articulo;
+import entities.Deposito;
 import entities.Modulo;
 
 /**
@@ -33,13 +27,13 @@ public class FacadeRemoteBean implements FacadeRemote {
 	@EJB(beanName = "AdministrarDespachosBean")
 	private AdministrarDespachos adminOD;
 	
-	@EJB(beanName = "AdministrarSistema")
+	@EJB(beanName = "AdministrarSistemaBean")
 	private AdministrarSistema adminSis;
 	
 	@EJB(beanName = "AdministradorModulosBean")
 	private AdministradorModulos adminMod;
 	
-	@EJB(beanName = "AdministradorArticulos")
+	@EJB(beanName = "AdministradorArticulosBean")
 	private AdministradorArticulos amdinArt;
 
 	public FacadeRemoteBean() {
@@ -77,15 +71,53 @@ public class FacadeRemoteBean implements FacadeRemote {
 	}
 
 	@Override
+	@WebMethod(exclude=true)
 	public Modulo getModulo(int idModulo) {
 		// TODO Auto-generated method stub
 		return this.adminMod.getModulo(idModulo);
 	}
 
+	
 	@Override
+	@WebMethod(exclude=true)
 	public boolean addArticulo(Articulo articulo) {
 		// TODO Auto-generated method stub
 		return this.addArticulo(articulo);
+	}
+
+	@Override
+	@WebMethod(exclude=true)
+	public boolean createModulo(String tipo, int idModulo, String ip, String nombre,
+			String codigo, String usuario, String password,
+			String jmsDestination) {
+		// TODO Auto-generated method stub
+		return adminMod.createModulo(tipo, idModulo, ip, nombre, codigo, usuario, password, jmsDestination);
+	}
+
+	@Override
+	@WebMethod(exclude=true)
+	public boolean deleteModulo(int idModulo) {
+		// TODO Auto-generated method stub
+		return adminMod.deleteModulo(idModulo);
+	}
+
+	@Override
+	public boolean updateModulo() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Deposito getDeposito(int idDeposito) {
+		// TODO Auto-generated method stub
+		Deposito dep = this.adminMod.getDeposito(idDeposito);
+		return dep;
+	}
+
+	@Override
+	public boolean addArticulo(int codigo, String nombre, int idModulo) {
+		// TODO Auto-generated method stub
+		return amdinArt.createArticulo(codigo, nombre, idModulo);
 	}
 
 }
