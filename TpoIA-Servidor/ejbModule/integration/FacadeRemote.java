@@ -3,6 +3,7 @@ package integration;
 import javax.ejb.Remote;
 
 import entities.Articulo;
+import entities.Deposito;
 import entities.Modulo;
 
 @Remote
@@ -12,4 +13,9 @@ public interface FacadeRemote {
 	public boolean validarUsuarioLogueado(String usuario);
 	public Modulo getModulo(int idModulo);
 	public boolean addArticulo(Articulo articulo);
+	public boolean createModulo(String tipo, int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination);
+	public boolean deleteModulo(int idModulo);
+	public boolean updateModulo();
+	public Deposito getDeposito(int idDeposito);
+	public boolean addArticulo(int codigo, String nombre, int idModulo);
 }
