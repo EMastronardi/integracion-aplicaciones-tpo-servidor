@@ -18,7 +18,6 @@ import javax.persistence.Table;
 
 public class Modulo {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int idModulo;
 	private String ip;
 	private String nombre;
@@ -27,6 +26,18 @@ public class Modulo {
 	private String password;
 	private String jmsDestination;
 	
+	public Modulo() {
+	}
+	
+	public Modulo(int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination) {
+		this.idModulo = idModulo;
+		this.ip = ip;
+		this.nombre = nombre;
+		this.codigo = codigo;
+		this.usuario = usuario;
+		this.password = password;
+		this.jmsDestination = jmsDestination;
+	}
 	public String getJmsDestination() {
 		return jmsDestination;
 	}
@@ -51,8 +62,7 @@ public class Modulo {
 		this.password = password;
 	}
 
-	public Modulo() {
-	}
+	
 	
 	public int getIdModulo() {
 		return idModulo;
@@ -78,14 +88,6 @@ public class Modulo {
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-	public Modulo(int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination) {
-		this.idModulo = idModulo;
-		this.ip = ip;
-		this.nombre = nombre;
-		this.codigo = codigo;
-		this.usuario = usuario;
-		this.password = password;
-		this.jmsDestination = jmsDestination;
-	}
+	
 	
 }
