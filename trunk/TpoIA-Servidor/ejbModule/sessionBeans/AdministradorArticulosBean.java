@@ -1,11 +1,11 @@
 package sessionBeans;
 
-import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import entities.Articulo;
+import entities.Deposito;
 
 /**
  * Session Bean implementation class AdministradorArticulosBean
@@ -22,9 +22,14 @@ public class AdministradorArticulosBean implements AdministradorArticulos {
     }
 
 	@Override
-	public boolean createArticulo(Articulo art) {
+	public boolean createArticulo(int codigo, String nombre, int idModulo) {
 		// TODO Auto-generated method stub
 		try {
+			Deposito dep = em.find(Deposito.class, idModulo);
+			Articulo art = new Articulo();
+			art.setDeposito(dep);
+			art.setNombre(nombre);
+			art.setNroArticulo(codigo);
 			em.persist(art);
 			return true;
 		} catch (Exception e) {

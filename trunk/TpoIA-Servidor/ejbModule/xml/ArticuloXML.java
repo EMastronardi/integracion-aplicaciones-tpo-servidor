@@ -4,6 +4,8 @@ public class ArticuloXML {
 	private int codigo;
 	private String nombre;
 	private int idModulo;
+	public ArticuloXML() {
+	}
 	public int getCodigo() {
 		return codigo;
 	}

@@ -6,5 +6,5 @@ import entities.Articulo;
 
 @Remote
 public interface AdministradorArticulos {
-	public boolean createArticulo(Articulo art);
+	public boolean createArticulo(int codigo, String nombre, int idModulo);
 }
