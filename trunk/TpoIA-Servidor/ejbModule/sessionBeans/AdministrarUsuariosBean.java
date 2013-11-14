@@ -43,11 +43,10 @@ public class AdministrarUsuariosBean implements AdministrarUsuarios {
 	}
 
 	@Override
-	public boolean eliminarUsuario(UsuarioVO usuarioVo) {
+	public boolean eliminarUsuario(int idUsuario) {
 		// TODO Auto-generated method stub
 		try {
-			Usuario usuario = (Usuario) em.find(Usuario.class,
-					usuarioVo.getIdUsuario());
+			Usuario usuario = (Usuario) em.find(Usuario.class,idUsuario);
 			em.remove(usuario);
 			return true;
 		} catch (Exception e) {
@@ -67,10 +66,36 @@ public class AdministrarUsuariosBean implements AdministrarUsuarios {
 		return false;
 	}
 
+	
+
 	@Override
-	public boolean actualizarUsuario(UsuarioVO usuario) {
+	public ArrayList<UsuarioVO> getUsers() {
 		// TODO Auto-generated method stub
-		return false;
+		ArrayList<UsuarioVO> rslt = new ArrayList<UsuarioVO>();
+		Query q = em.createQuery("from Usuario u");
+		ArrayList<Usuario> users = (ArrayList<Usuario>) q.getResultList();
+		
+		for (Usuario usuario : users) {
+			if(usuario.getNombre() != null){
+				UsuarioVO vo = new UsuarioVO(usuario.getIdUsuario(), usuario.getNombre(), usuario.getPassword());
+				rslt.add(vo);
+			} 
+		}
+		return rslt;
 	}
 
+	@Override
+	public boolean actualizarUsuario(int idUsuario, String username,
+			String password) {
+		try {
+			Usuario user = (Usuario) em.find(Usuario.class, idUsuario);
+			user.setNombre(username);
+			user.setPassword(password);
+			em.persist(user);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }
