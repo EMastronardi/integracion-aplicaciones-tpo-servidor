@@ -1,5 +1,7 @@
 package integration;
 
+import java.util.ArrayList;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
@@ -10,6 +12,7 @@ import sessionBeans.AdministradorModulos;
 import sessionBeans.AdministrarDespachos;
 import sessionBeans.AdministrarSistema;
 import sessionBeans.AdministrarUsuarios;
+import valueObjects.UsuarioVO;
 import entities.Articulo;
 import entities.Deposito;
 import entities.Modulo;
@@ -46,6 +49,7 @@ public class FacadeRemoteBean implements FacadeRemote {
 		return adminUser.validarUsuario(username, password);
 	}
 
+	
 	@WebMethod(exclude=true)
 	public boolean createUser(String username, String password) {
 		// TODO Auto-generated method stub
@@ -118,6 +122,25 @@ public class FacadeRemoteBean implements FacadeRemote {
 	public boolean addArticulo(int codigo, String nombre, int idModulo) {
 		// TODO Auto-generated method stub
 		return amdinArt.createArticulo(codigo, nombre, idModulo);
+	}
+
+	@Override
+	public ArrayList<UsuarioVO> getUsers() {
+		// TODO Auto-generated method stub
+		return adminUser.getUsers();
+	}
+
+	@Override
+	public boolean updateUser(int idUser, String username, String password) {
+		// TODO Auto-generated method stub
+		
+		return adminUser.actualizarUsuario(idUser, username, password);
+	}
+
+	@Override
+	public boolean deleteUser(int idUser) {
+		// TODO Auto-generated method stub
+		return adminUser.eliminarUsuario(idUser);
 	}
 
 }

@@ -1,7 +1,10 @@
 package integration;
 
+import java.util.ArrayList;
+
 import javax.ejb.Remote;
 
+import valueObjects.UsuarioVO;
 import entities.Articulo;
 import entities.Deposito;
 import entities.Modulo;
@@ -9,6 +12,8 @@ import entities.Modulo;
 @Remote
 public interface FacadeRemote {
 	public boolean createUser(String username, String password);
+	public boolean updateUser(int idUser, String username, String password);
+	public boolean deleteUser(int idUser);
 	public boolean validarUsuario(String usuario, String password);
 	public boolean validarUsuarioLogueado(String usuario);
 	public Modulo getModulo(int idModulo);
@@ -18,4 +23,6 @@ public interface FacadeRemote {
 	public boolean updateModulo();
 	public Deposito getDeposito(int idDeposito);
 	public boolean addArticulo(int codigo, String nombre, int idModulo);
+	public ArrayList<UsuarioVO> getUsers();
+	
 }

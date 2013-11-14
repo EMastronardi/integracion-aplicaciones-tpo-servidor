@@ -1,12 +1,13 @@
 package valueObjects;
 
-public class UsuarioVO {
+import java.io.Serializable;
+
+public class UsuarioVO implements Serializable{
 	private int idUsuario;
 	private String nombre;
 	private String password;
-	
+	public UsuarioVO(){}
 	public UsuarioVO(int idUsuario, String nombre, String password) {
-		super();
 		this.idUsuario = idUsuario;
 		this.nombre = nombre;
 		this.password = password;
