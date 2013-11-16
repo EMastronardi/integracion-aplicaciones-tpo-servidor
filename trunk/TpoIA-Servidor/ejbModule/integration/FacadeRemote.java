@@ -6,6 +6,7 @@ import javax.ejb.Remote;
 
 import valueObjects.ModuloVO;
 import valueObjects.UsuarioVO;
+import xml.RespuestaXML;
 import entities.Articulo;
 import entities.Deposito;
 import entities.Modulo;
