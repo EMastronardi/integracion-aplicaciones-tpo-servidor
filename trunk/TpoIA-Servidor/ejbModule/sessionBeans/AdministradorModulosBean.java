@@ -1,11 +1,14 @@
 package sessionBeans;
 
+import java.util.ArrayList;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import valueObjects.ModuloVO;
 import entities.Deposito;
 import entities.Logistica;
 import entities.Modulo;
@@ -71,9 +74,19 @@ public class AdministradorModulosBean implements AdministradorModulos {
 	}
 
 	@Override
-	public boolean updateModulo(Modulo modulo) {
+	public boolean updateModulo(String tipo, int idModulo, String ip, String nombre,
+			String codigo, String usuario, String password,
+			String jmsDestination){
 		// TODO Auto-generated method stub
-		return false;
+				try {
+					Modulo mod = (Modulo) em.find(Modulo.class, idModulo);
+					em.persist(mod);
+					return true;
+				} catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+					return false;
+				}
 	}
 
 	@Override
@@ -98,6 +111,29 @@ public class AdministradorModulosBean implements AdministradorModulos {
 		if(depo != null)
 			return "getCodigo:"+depo.getCodigo()+"getIP"+ depo.getIp();
 		return "NADAAA";
+	}
+
+	@Override
+	public ArrayList<ModuloVO> getAllModulos() {
+		// TODO Auto-generated method stub
+		ArrayList<Modulo> vecAux = null;
+		ArrayList<ModuloVO> rslt = new ArrayList<ModuloVO>();
+		Query q = em.createQuery("from Modulo m");
+		vecAux = (ArrayList<Modulo>)q.getResultList();
+		
+		for (Modulo modulo : vecAux) {
+			ModuloVO mod = new ModuloVO();
+			mod.setCodigo(modulo.getCodigo());
+			mod.setIdModulo(modulo.getIdModulo());
+			mod.setIp(modulo.getIp());
+			mod.setJmsDestination(modulo.getJmsDestination());
+			mod.setPassword(modulo.getPassword());
+			mod.setUsuario(modulo.getUsuario());
+			mod.setNombre(modulo.getNombre());
+			mod.setTipo(modulo.isModulo());
+			rslt.add(mod);			
+		}
+		return rslt;
 	}
 
 }
