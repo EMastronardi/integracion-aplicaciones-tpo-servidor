@@ -27,4 +27,5 @@ public interface FacadeRemote {
 	public boolean addArticulo(int codigo, String nombre, int idModulo);
 	public ArrayList<UsuarioVO> getUsers();
 	public ArrayList<ModuloVO> getAllModulos();	
+	public RespuestaXML recibirArticulos(String jsonData);
 }
