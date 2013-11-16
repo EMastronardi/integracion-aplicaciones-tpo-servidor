@@ -31,7 +31,7 @@ public class OrdenDespacho {
 	private Date fecha;
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idDespacho")
-	private List<ItemOrdenDespacho> itemsDespacho;
+	private List<Solicitud> solicitudes;
 	private String estado;
 	
 	
@@ -63,11 +63,11 @@ public class OrdenDespacho {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	public List<ItemOrdenDespacho> getItemsDespacho() {
-		return itemsDespacho;
+	public List<Solicitud> getSolicitudes() {
+		return this.solicitudes;
 	}
-	public void setItemsDespacho(ArrayList<ItemOrdenDespacho> itemsDespacho) {
-		this.itemsDespacho = itemsDespacho;
+	public void setSolicitudes(ArrayList<Solicitud> solicitudes) {
+		this.solicitudes = solicitudes;
 	}
 	public String getEstado() {
 		return estado;
@@ -76,13 +76,13 @@ public class OrdenDespacho {
 		this.estado = estado;
 	}
 	public OrdenDespacho(int nroDespacho, int nroVenta, Modulo modulo,
-			Date fecha, ArrayList<ItemOrdenDespacho> itemsDespacho,
+			Date fecha, ArrayList<Solicitud> solicitudes,
 			String estado) {
 		this.nroOrdenDespacho = nroDespacho;
 		this.nroVenta = nroVenta;
 		this.modulo = modulo;
 		this.fecha = fecha;
-		this.itemsDespacho = itemsDespacho;
+		this.solicitudes = solicitudes;
 		this.estado = estado;
 	}
 	
