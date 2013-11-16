@@ -147,10 +147,12 @@ public class FacadeRemoteBean implements FacadeRemote {
 		return adminUser.eliminarUsuario(idUser);
 	}
 	
+	@Override
 	public RespuestaXML recibirArticulos(String jsonData){
 		
 		return adminOD.recibirArticulos(jsonData);
 	}
+	
 	@Override
 	public ArrayList<ModuloVO> getAllModulos() {
 		// TODO Auto-generated method stub
