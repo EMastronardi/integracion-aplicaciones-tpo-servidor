@@ -21,9 +21,17 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import net.sf.json.JSONSerializer;
+
+import org.hornetq.utils.json.JSONArray;
+import org.hornetq.utils.json.JSONException;
+import org.hornetq.utils.json.JSONObject;
+
 import utils.Constantes;
+import utils.ItemSAJson;
 import xml.ItemXML;
 import xml.OrdenDespachoXML;
+import xml.RespuestaXML;
 import xml.SolicitudXML;
 
 import com.thoughtworks.xstream.XStream;
@@ -115,11 +123,11 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 			od.setSolicitudes(solicitudes);
 			em.persist(od);
-		}else{
-			System.out.println("No se genera la OrdenDespacho, ningun Articulo existente");
+		} else {
+			System.out
+					.println("No se genera la OrdenDespacho, ningun Articulo existente");
 		}
 
-		
 		return "";
 
 	}
@@ -276,6 +284,139 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	private String getIdModulo() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	private OrdenDespacho buscarODporSA(int idSolicitud) {
+		// OrdenDespacho od;
+		return null;
+	}
+
+	public RespuestaXML recibirArticulos(String jsonData) {
+		RespuestaXML respuesta = new RespuestaXML();
+		try {
+			JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonData);
+			JSONArray items_sol = json.getJSONArray("items");
+			OrdenDespacho od = null;
+			boolean odReady = true;
+			ArrayList<ItemSAJson> itemsJson = new ArrayList<ItemSAJson>();
+
+			int index = 0;
+			// Recupera el idModulo
+			int idModulo;
+
+			idModulo = json.getInt("idModulo");
+
+			if (idModulo == 0) {
+				respuesta.setEstado("ERROR");
+				respuesta.setMensaje("El módulo no existe");
+			}
+
+			// Recupera el idSolicitud
+			int idSolicitud = json.getInt("idSolicitud");
+			if (idModulo != 0) {
+				/*
+				 * Busca si existe la solicitud de artículos y levanta la orden
+				 * de despacho
+				 */
+				od = buscarODporSA(idSolicitud);
+				if (od == null) {
+					respuesta.setEstado("ERROR");
+					respuesta.setMensaje("No existe orden de despacho asociada");
+				}
+			} else {
+				respuesta.setEstado("ERROR");
+				respuesta.setMensaje("La solicitud de artículos no existe");
+			}
+
+			while (!items_sol.isNull(index)) {
+				JSONObject item = (JSONObject) items_sol.get(index);
+				// Se obtiene Código de Artículo y cantidad recibida
+				int codigo = item.getInt("codigo");
+				int cantidad = item.getInt("cantidad");
+
+				itemsJson.add(new ItemSAJson(codigo, cantidad));
+				index = index++;
+			}
+
+			if (!itemsJson.isEmpty()) {
+				ArrayList<Solicitud> solicitudes = (ArrayList<Solicitud>) od
+						.getSolicitudes();
+				/*
+				 * Recorre las solicitudes para determinar si la OD ha sido
+				 * cumplida
+				 */
+				for (Solicitud so : solicitudes) {
+					if (so.getIdSolicitud() == idSolicitud) {
+						ArrayList<ItemSolicitud> items = (ArrayList<ItemSolicitud>) so
+								.getItems();
+
+						// Recorre los items recibidos
+						for (ItemSAJson isaj : itemsJson)
+							// Recorre los items de la Solicitud de Artículos
+							for (ItemSolicitud is : items) {
+								if (is.getArticulo().getNroArticulo() == isaj
+										.getCodigo()) {
+									int cantRec = is.getCantidadRecibida()
+											+ isaj.getCantidad();
+									// Setea cantidad recibida
+									is.setCantidadRecibida(cantRec);
+									if (cantRec != is.getCantidad()) {
+										odReady = false;
+									}
+									break;
+								}
+							}
+						/*
+						 * Una vez terminado el Update de cantidades recibidas
+						 * en la SA Se dispone a chequear si todas sus
+						 * posiciones fueron cumplidas Si odReady es false, ya
+						 * se sabe que algo está pendiente
+						 */
+						if (odReady)
+							for (ItemSolicitud is : items)
+								if (is.getCantidadRecibida() != is
+										.getCantidad()) {
+									odReady = false;
+									break;
+								}
+					} else {
+						for (ItemSolicitud iso : so.getItems()) {
+							if (iso.getCantidad() != iso.getCantidadRecibida()) {
+								odReady = false;
+								break;
+							}
+						}
+					}
+				}
+				/*
+				 * Si la OD contiene todas sus Solicitudes de Artículos
+				 * completas, envía Log al PortalWeb y Log&Monit
+				 */
+				if (odReady) {
+					od.setEstado("Completa");
+					em.merge(od);
+					
+					notificarEntregaExitosa(od);
+					respuesta.setEstado("OK");
+					respuesta.setMensaje("OD completa");
+				} else {
+					respuesta.setEstado("OK");
+					respuesta.setMensaje("OD parcialmente cumplida");
+				}
+			} else {
+				respuesta.setEstado("ERROR");
+				respuesta.setMensaje("No existen Items a Recibir");
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return respuesta;
+	}
+
+	private void notificarEntregaExitosa(OrdenDespacho od) {
+		// Notificar Entrega a Log&Monit
+		// Notificar Entrega a Portal Web
 	}
 
 }
