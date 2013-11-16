@@ -17,7 +17,7 @@ public class ItemOrdenDespacho {
     @JoinColumn(name="idArticulo")
 	private Articulo articulo;
 	private int cantidad;
-	private int solicitudArticulo;
+	private int idSolicitud;
 	
 	
 	public ItemOrdenDespacho() {
@@ -35,15 +35,15 @@ public class ItemOrdenDespacho {
 		this.cantidad = cantidad;
 	}
 	public int getSolicitudArticulo() {
-		return solicitudArticulo;
+		return idSolicitud;
 	}
 	public void setSolicitudArticulo(int solicitudArticulo) {
-		this.solicitudArticulo = solicitudArticulo;
+		this.idSolicitud = solicitudArticulo;
 	}
 	public ItemOrdenDespacho(Articulo articulo, int cantidad,
 			int solicitudArticulo) {
 		this.articulo = articulo;
 		this.cantidad = cantidad;
-		this.solicitudArticulo = solicitudArticulo;
+		this.idSolicitud = solicitudArticulo;
 	}
 }
