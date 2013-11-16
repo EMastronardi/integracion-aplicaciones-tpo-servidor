@@ -1,6 +1,7 @@
 package entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -21,7 +22,7 @@ public class Solicitud {
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idSolicitud")
-	private ArrayList<ItemSolicitud> items;
+	private List<ItemSolicitud> items;
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idDeposito")
@@ -39,7 +40,7 @@ public class Solicitud {
 	public void setIdSolicitud(int idSolicitud) {
 		this.idSolicitud = idSolicitud;
 	}
-	public ArrayList<ItemSolicitud> getItems() {
+	public List<ItemSolicitud> getItems() {
 		return items;
 	}
 	public void setItems(ArrayList<ItemSolicitud> items) {
@@ -50,6 +51,12 @@ public class Solicitud {
 		this.items = items;
 	}
 	public Solicitud() {
+	}
+	public void AddArticulo(ItemSolicitud iSol) {
+		if(this.items == null){
+			this.items = new ArrayList<ItemSolicitud>();
+		}
+		this.items.add(iSol);
 	}
 
 }

@@ -1,5 +1,6 @@
 package entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +19,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name ="OrdenesDespacho")
-public class OrdenDespacho {
+public class OrdenDespacho implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name ="idDespacho")

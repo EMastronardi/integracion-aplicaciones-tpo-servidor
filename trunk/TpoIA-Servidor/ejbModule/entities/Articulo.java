@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name= "Articulos")
-public class Articulo  implements Serializable {
+public class Articulo implements Serializable {
 	@Id
 	@Column(name="idArticulo")
 	private int nroArticulo;
