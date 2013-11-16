@@ -2,20 +2,20 @@ package xml;
 
 public class ItemXML {
 	
-	private String codigo;
+	private String codigoArticulo;
 	private int cantidad;
 	
 	public ItemXML(int nroArticulo, int cantidad2) {
-		this.codigo = String.valueOf(nroArticulo);
+		this.codigoArticulo = String.valueOf(nroArticulo);
 		this.cantidad = cantidad2;
 	}
 
 	public String getCodigo() {
-		return codigo;
+		return codigoArticulo;
 	}
 	
 	public void setCodigo(String codigo) {
-		this.codigo = codigo;
+		this.codigoArticulo = codigo;
 	}
 	
 	public int getCantidad() {

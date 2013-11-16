@@ -38,7 +38,7 @@ public class SolicitudXML {
 		this.articulos = articulos;
 	}
 	public void addArticulo(int nroArticulo, int cantidad) {
-		if(articulos != null){
+		if(articulos == null){
 			articulos = new ArrayList<ItemXML>();
 		}
 		articulos.add(new ItemXML(nroArticulo, cantidad));
