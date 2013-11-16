@@ -10,6 +10,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="Modulos")
@@ -25,6 +26,8 @@ public class Modulo {
 	private String usuario;
 	private String password;
 	private String jmsDestination;
+	@Transient
+	protected String tipo  = "modulo";
 	
 	public Modulo() {
 	}
@@ -61,8 +64,6 @@ public class Modulo {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	
 	
 	public int getIdModulo() {
 		return idModulo;
@@ -88,6 +89,7 @@ public class Modulo {
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-	
-	
+	public  String isModulo() {
+		return this.tipo;
+	}
 }

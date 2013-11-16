@@ -12,6 +12,7 @@ import sessionBeans.AdministradorModulos;
 import sessionBeans.AdministrarDespachos;
 import sessionBeans.AdministrarSistema;
 import sessionBeans.AdministrarUsuarios;
+import valueObjects.ModuloVO;
 import valueObjects.UsuarioVO;
 import entities.Articulo;
 import entities.Deposito;
@@ -106,9 +107,11 @@ public class FacadeRemoteBean implements FacadeRemote {
 	}
 
 	@Override
-	public boolean updateModulo() {
+	public boolean updateModulo(String tipo, int idModulo, String ip, String nombre,
+			String codigo, String usuario, String password,
+			String jmsDestination){ 
 		// TODO Auto-generated method stub
-		return false;
+		return adminMod.updateModulo(tipo, idModulo, ip, nombre, codigo,  usuario,  password, jmsDestination);
 	}
 
 	@Override
@@ -141,6 +144,14 @@ public class FacadeRemoteBean implements FacadeRemote {
 	public boolean deleteUser(int idUser) {
 		// TODO Auto-generated method stub
 		return adminUser.eliminarUsuario(idUser);
+	}
+
+	@Override
+	public ArrayList<ModuloVO> getAllModulos() {
+		// TODO Auto-generated method stub
+		ArrayList<ModuloVO> vo = adminMod.getAllModulos();
+		
+		return vo;
 	}
 
 }
