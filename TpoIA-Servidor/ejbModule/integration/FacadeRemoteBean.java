@@ -14,6 +14,7 @@ import sessionBeans.AdministrarSistema;
 import sessionBeans.AdministrarUsuarios;
 import valueObjects.ModuloVO;
 import valueObjects.UsuarioVO;
+import xml.RespuestaXML;
 import entities.Articulo;
 import entities.Deposito;
 import entities.Modulo;
@@ -145,7 +146,11 @@ public class FacadeRemoteBean implements FacadeRemote {
 		// TODO Auto-generated method stub
 		return adminUser.eliminarUsuario(idUser);
 	}
-
+	
+	public RespuestaXML recibirArticulos(String jsonData){
+		
+		return adminOD.recibirArticulos(jsonData);
+	}
 	@Override
 	public ArrayList<ModuloVO> getAllModulos() {
 		// TODO Auto-generated method stub
