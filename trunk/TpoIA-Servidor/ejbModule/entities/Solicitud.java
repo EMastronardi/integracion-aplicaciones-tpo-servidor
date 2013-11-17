@@ -26,12 +26,12 @@ public class Solicitud {
 	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idDeposito")
-	private Deposito deposito;
+	private Modulo deposito;
 	
-	public Deposito getDeposito() {
+	public Modulo getDeposito() {
 		return deposito;
 	}
-	public void setDeposito(Deposito deposito) {
+	public void setDeposito(Modulo deposito) {
 		this.deposito = deposito;
 	}
 	public int getIdSolicitud() {

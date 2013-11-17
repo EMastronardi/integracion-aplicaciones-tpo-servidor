@@ -14,9 +14,6 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name="Modulos")
-@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="tipo", discriminatorType= DiscriminatorType.STRING)
-
 public class Modulo {
 	@Id
 	private int idModulo;
@@ -26,13 +23,20 @@ public class Modulo {
 	private String usuario;
 	private String password;
 	private String jmsDestination;
-	@Transient
-	protected String tipo  = "modulo";
+	private String tipo;
 	
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
 	public Modulo() {
 	}
 	
-	public Modulo(int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination) {
+	public Modulo(int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination, String tipo) {
 		this.idModulo = idModulo;
 		this.ip = ip;
 		this.nombre = nombre;
@@ -40,6 +44,7 @@ public class Modulo {
 		this.usuario = usuario;
 		this.password = password;
 		this.jmsDestination = jmsDestination;
+		this.tipo = tipo;
 	}
 	public String getJmsDestination() {
 		return jmsDestination;
@@ -89,7 +94,5 @@ public class Modulo {
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-	public  String isModulo() {
-		return this.tipo;
-	}
+
 }

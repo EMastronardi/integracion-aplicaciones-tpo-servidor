@@ -41,7 +41,6 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.DateConverter;
 
 import entities.Articulo;
-import entities.Deposito;
 import entities.ItemSolicitud;
 import entities.Modulo;
 import entities.OrdenDespacho;
@@ -131,6 +130,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 					.println("No se genera la OrdenDespacho, ningun Articulo existente");
 		}
 
+		
 		return "";
 
 	}
