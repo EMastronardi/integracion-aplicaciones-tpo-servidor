@@ -32,6 +32,13 @@ public class AdministradorModulosBean implements AdministradorModulos {
 		Modulo mod = (Modulo) em.find(Modulo.class, idModulo);
 		return mod;
 	}
+	
+	public Modulo getModulo(String tipo) {
+		Query q = em.createQuery("from Modulo m where m.tipo = :tipodeposito");
+		q.setParameter("tipodeposito",tipo);
+		Modulo mod = (Modulo)q.getSingleResult();
+		return mod;
+	}
 
 	@Override
 	public boolean createModulo(String tipo, int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination) {
@@ -104,7 +111,7 @@ public class AdministradorModulosBean implements AdministradorModulos {
 			mod.setPassword(modulo.getPassword());
 			mod.setUsuario(modulo.getUsuario());
 			mod.setNombre(modulo.getNombre());
-			mod.setTipo(modulo.getTipo());
+			mod.setTipo(modulo.isModulo());
 			rslt.add(mod);			
 		}
 		return rslt;
