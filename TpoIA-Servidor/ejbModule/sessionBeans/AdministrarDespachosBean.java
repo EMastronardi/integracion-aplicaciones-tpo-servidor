@@ -2,11 +2,11 @@ package sessionBeans;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -30,7 +30,6 @@ import net.sf.json.JSONObject;
 //import org.hornetq.utils.json.JSONException;
 //import org.hornetq.utils.json.JSONObject;
 
-import utils.Constantes;
 import utils.ItemSAJson;
 import xml.ItemXML;
 import xml.OrdenDespachoXML;
@@ -55,16 +54,13 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	@PersistenceContext
 	private EntityManager em;
 
-	@EJB(beanName = "AdministrarSistemaBean")
-	private AdministrarSistema as;
-
 	public AdministrarDespachosBean() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public String procesarSolicitudDespacho(String valorXml) {
 		// Aca hay que procesar el xml y hacer lo que haya que hacer.
-
+		String resultado = "";
 		XStream xstream = new XStream();
 		xstream.alias("despacho", OrdenDespachoXML.class);
 		xstream.alias("item", ItemXML.class);
@@ -73,65 +69,64 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 		OrdenDespachoXML odXml = (OrdenDespachoXML) xstream.fromXML(valorXml);
 		OrdenDespacho od = new OrdenDespacho();
-		od.setNroOrdenDespacho(odXml.getNroDespacho());
+		od.setIdOrdenDespacho(odXml.getNroDespacho());
 		od.setNroVenta(odXml.getNroVenta());
 		od.setFecha(odXml.getFecha());
 		od.setEstado("Pendiente");
 
-		// Armar Solicitudes y ItemsOrdenDespacho
-		List<ItemXML> itmsXml = odXml.getItems();
+		Modulo m = (Modulo) em.find(Modulo.class, odXml.getIdModulo());
+		if (m != null) {
+			od.setModulo(m);
 
-		// la hash table tienen <idDeposito, Solicitud>
-		Hashtable<Integer, Solicitud> tabla = new Hashtable<Integer, Solicitud>();
-		for (ItemXML itm : itmsXml) {
+			// Armar Solicitudes y ItemsOrdenDespacho
+			List<ItemXML> itmsXml = odXml.getItems();
 
-			Articulo art = (Articulo) em.find(Articulo.class,
-					Integer.parseInt(itm.getCodigo()));
-			if (art != null) {// TODO: que hacer cuando es null???
-				// Ya esta el iddeposito de ese articulo en la tabla??? //
+			
+			// la hash table tienen <idDeposito, Solicitud>
+			Map<Modulo, List<ItemSolicitud>> tabla = new HashMap<Modulo, List<ItemSolicitud>>();
+			
+			for (ItemXML itm : itmsXml) {
 
-				ItemSolicitud iSol = new ItemSolicitud();
-				iSol.setArticulo(art);
-				iSol.setCantidad(itm.getCantidad());
-				iSol.setCantidadRecibida(0);
+				Articulo art = (Articulo) em.find(Articulo.class, Integer.parseInt(itm.getCodigo()));
+				if (art != null) {// TODO: que hacer cuando es null???
+					// Ya esta el deposito de ese articulo en la tabla??? //
 
-				if (tabla.containsKey(art.getDeposito().getIdModulo())) {
-					// agrego el art a esa solicitd
-					Solicitud sol = tabla.get(art.getDeposito().getIdModulo());
-					sol.AddArticulo(iSol);
+					if (!tabla.containsKey(art.getModulo())) {
+						// Creo una nueva Lista de solicitudes y la agrego a la tabla
+						tabla.put(art.getModulo(),new ArrayList<ItemSolicitud>());
+					}
 
-				} else {// Creo una nueva solicitud y la agrego a la hashtable
-					Solicitud sol = new Solicitud();
-					sol.setDeposito(art.getDeposito());
-					sol.AddArticulo(iSol);
+					tabla.get(art.getModulo()).add(new ItemSolicitud(itm, art));
 
-					// grabo la nueva sol en la tabla
-					tabla.put(art.getDeposito().getIdModulo(), sol);
+				} else {
+					System.out.println("El articulo nro: " + itm.getCodigo() + " no existe.");
 				}
+			}
+
+			if (!tabla.isEmpty()) {
+
+				for (Modulo modulo : tabla.keySet()) {
+					Solicitud solicitud = new Solicitud();
+					solicitud.agregarItemsSolicitudArticulo(tabla.get(modulo));
+				
+					od.agregarSolicitudArticulo(solicitud);
+					
+				}
+				
+				em.merge(od);
+				resultado = "OK";
+				
 			} else {
-				System.out.println("El articulo nro: " + itm.getCodigo()
-						+ " no existe.");
+				resultado = "No se genera la OrdenDespacho, ningun Articulo existente";
+				System.out
+						.println("No se genera la OrdenDespacho, ningun Articulo existente");
 			}
-		}
-
-		if (!tabla.isEmpty()) {
-			ArrayList<Solicitud> solicitudes = new ArrayList<Solicitud>();
-			Enumeration<Solicitud> enumeration = tabla.elements();
-			while (enumeration.hasMoreElements()) {
-				solicitudes.add(enumeration.nextElement());
-				// enviarADeposito(itemsDespacho, od.getNroOrdenDespacho());
-
-			}
-
-			od.setSolicitudes(solicitudes);
-			em.persist(od);
 		} else {
-			System.out
-					.println("No se genera la OrdenDespacho, ningun Articulo existente");
+			resultado = "Error no encuentra el modulo correcto";
+			System.out.println(resultado);
 		}
 
-		
-		return "";
+		return resultado;
 
 	}
 
@@ -226,7 +221,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		String DEFAULT_USERNAME = "prod";// art.getDeposito().getUsuario();//"test";
 		String DEFAULT_PASSWORD = "prod1234";// art.getDeposito().getPassword();//"test123";
 		String INITIAL_CONTEXT_FACTORY = "org.jboss.naming.remote.client.InitialContextFactory";
-		String PROVIDER_URL = "remote://" + art.getDeposito().getIp() + ":4447";
+		String PROVIDER_URL = "remote://" + art.getModulo().getIp() + ":4447";
 
 		ConnectionFactory connectionFactory = null;
 		Connection connection = null;
@@ -269,7 +264,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		XStream xstream = new XStream();
 		SolicitudXML sxml = new SolicitudXML();
 
-		sxml.setIdModulo(as.getModuloId());
+		//sxml.setIdModulo(as.getModuloId());
 		sxml.setIdSolicitud(String.valueOf(nroDespacho));
 		List<ItemXML> articulos = new ArrayList<ItemXML>();
 		// foreach()
@@ -282,11 +277,6 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 		return "";
 
-	}
-
-	private String getIdModulo() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	private OrdenDespacho buscarODporSA(int idSolicitud) {
