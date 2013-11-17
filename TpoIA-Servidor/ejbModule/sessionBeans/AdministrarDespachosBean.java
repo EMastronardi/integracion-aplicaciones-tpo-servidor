@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -55,7 +56,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	@PersistenceContext
 	private EntityManager em;
 
-	@EJB(beanName = "AdministrarModulosBean")
+	@EJB(beanName = "AdministradorModulosBean")
 	private AdministradorModulos am;
 
 	public AdministrarDespachosBean() {

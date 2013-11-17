@@ -11,6 +11,7 @@ public class ModuloVO implements Serializable{
 	private String usuario;
 	private String password;
 	private String jmsDestination;
+	private String restDestinationLogisticaCambioEstado;
 	
 	public ModuloVO(){}
 
@@ -77,5 +78,15 @@ public class ModuloVO implements Serializable{
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
+
+	public String getRestDestinationLogisticaCambioEstado() {
+		return restDestinationLogisticaCambioEstado;
+	}
+
+	public void setRestDestinationLogisticaCambioEstado(
+			String restDestinationLogisticaCambioEstado) {
+		this.restDestinationLogisticaCambioEstado = restDestinationLogisticaCambioEstado;
+	}
+	
 	
 }

@@ -95,9 +95,9 @@ public class FacadeRemoteBean implements FacadeRemote {
 	@WebMethod(exclude=true)
 	public boolean createModulo(String tipo, int idModulo, String ip, String nombre,
 			String codigo, String usuario, String password,
-			String jmsDestination) {
+			String jmsDestination, String restDestinationLogisticaCambioEstado) {
 		// TODO Auto-generated method stub
-		return adminMod.createModulo(tipo, idModulo, ip, nombre, codigo, usuario, password, jmsDestination);
+		return adminMod.createModulo(tipo, idModulo, ip, nombre, codigo, usuario, password, jmsDestination, restDestinationLogisticaCambioEstado);
 	}
 
 	@Override
@@ -110,9 +110,9 @@ public class FacadeRemoteBean implements FacadeRemote {
 	@Override
 	public boolean updateModulo(String tipo, int idModulo, String ip, String nombre,
 			String codigo, String usuario, String password,
-			String jmsDestination){ 
+			String jmsDestination, String restDestinationLogisticaCambioEstado){ 
 		// TODO Auto-generated method stub
-		return adminMod.updateModulo(tipo, idModulo, ip, nombre, codigo,  usuario,  password, jmsDestination);
+		return adminMod.updateModulo(tipo, idModulo, ip, nombre, codigo,  usuario,  password, jmsDestination, restDestinationLogisticaCambioEstado);
 	}
 
 	@Override

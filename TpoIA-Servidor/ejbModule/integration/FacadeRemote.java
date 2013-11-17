@@ -20,9 +20,9 @@ public interface FacadeRemote {
 	public boolean validarUsuarioLogueado(String usuario);
 	public Modulo getModulo(int idModulo);
 	public boolean addArticulo(Articulo articulo);
-	public boolean createModulo(String tipo, int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination);
+	public boolean createModulo(String tipo, int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination, String restDestinationLogisticaCambioEstado);
 	public boolean deleteModulo(int idModulo);
-	public boolean updateModulo(String tipo, int idModulo, String ip, String nombre,String codigo, String usuario, String password, String jmsDestination);
+	public boolean updateModulo(String tipo, int idModulo, String ip, String nombre,String codigo, String usuario, String password, String jmsDestination, String restDestinationLogisticaCambioEstado);
 	public boolean addArticulo(int codigo, String nombre, int idModulo);
 	public ArrayList<ArticuloVO> getArticulos();
 	public ArrayList<ArticuloVO> searchArticulos(String filtro, int valor);
