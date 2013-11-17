@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -20,9 +21,9 @@ public class Articulo implements Serializable {
 	@Column(name="idArticulo")
 	private int nroArticulo;
 	private String nombre;
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name="idDeposito")
-	private Modulo deposito;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="idModulo")
+	private Modulo modulo;
 	
 	public Articulo(){
 		
@@ -39,16 +40,16 @@ public class Articulo implements Serializable {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public Modulo getDeposito() {
-		return deposito;
+	public Modulo getModulo() {
+		return modulo;
 	}
-	public void setDeposito(Modulo deposito) {
-		this.deposito = deposito;
+	public void setDeposito(Modulo modulo) {
+		this.modulo = modulo;
 	}
-	public Articulo(int nroArticulo, String nombre, Modulo deposito) {
+	public Articulo(int nroArticulo, String nombre, Modulo modulo) {
 		this.nroArticulo = nroArticulo;
 		this.nombre = nombre;
-		this.deposito = deposito;
+		this.modulo = modulo;
 	}
 	
 }

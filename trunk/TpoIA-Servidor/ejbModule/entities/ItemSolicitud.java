@@ -1,24 +1,35 @@
 package entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import xml.ItemXML;
 
 @Entity
 @Table(name="ItemsSolicitudes")
-public class ItemSolicitud {
+public class ItemSolicitud implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-	private int idItemSolicitud;
-	@ManyToOne
-    @JoinColumn(name="idArticulo")
-	private Articulo articulo;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int id;
 	private int cantidad;
 	private int cantidadRecibida;
+	
+	
+	@OneToOne
+	@JoinColumn(name = "idArticulo")
+	private Articulo articulo;
 	
 	public int getCantidadRecibida() {
 		return cantidadRecibida;
@@ -26,11 +37,14 @@ public class ItemSolicitud {
 	public void setCantidadRecibida(int cantidadRecibida) {
 		this.cantidadRecibida = cantidadRecibida;
 	}
-	private int idSolicitud;
 	
 	
+
 	public ItemSolicitud() {
+	
 	}
+	
+	
 	public Articulo getArticulo() {
 		return articulo;
 	}
@@ -43,26 +57,11 @@ public class ItemSolicitud {
 	public void setCantidad(int cantidad) {
 		this.cantidad = cantidad;
 	}
+
 	
-	public int getIditemOrdenDespacho() {
-		return idItemSolicitud;
-	}
-	public void setIditemOrdenDespacho(int iditemOrdenDespacho) {
-		this.idItemSolicitud = iditemOrdenDespacho;
-	}
-	public int getIdSolicitud() {
-		return idSolicitud;
-	}
-	public void setIdSolicitud(int idSolicitud) {
-		this.idSolicitud = idSolicitud;
-	}
-	public void setSolicitudArticulo(int solicitudArticulo) {
-		this.idSolicitud = solicitudArticulo;
-	}
-	public ItemSolicitud(Articulo articulo, int cantidad,
-			int solicitudArticulo) {
-		this.articulo = articulo;
-		this.cantidad = cantidad;
-		this.idSolicitud = solicitudArticulo;
+	public ItemSolicitud(ItemXML itm, Articulo art) {
+		this.setArticulo(art);
+		this.setCantidad(itm.getCantidad());
+		this.setCantidadRecibida(0);
 	}
 }

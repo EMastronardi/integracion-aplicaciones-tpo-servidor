@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -20,31 +21,36 @@ import javax.persistence.Table;
 @Entity
 @Table(name ="OrdenesDespacho")
 public class OrdenDespacho implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name ="idDespacho")
-	private int nroOrdenDespacho;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 	@Column(name="idVenta")
 	private int nroVenta;
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="idModulo")
 	private Modulo modulo;
 	private Date fecha;
+	
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idDespacho")
+	@JoinColumn(name = "idOrdenDespacho")
 	private List<Solicitud> solicitudes;
 	private String estado;
 	
 	
 	public OrdenDespacho() {
+		solicitudes = new ArrayList<Solicitud>();
 	}
 
-	public int getNroOrdenDespacho() {
-		return nroOrdenDespacho;
+	public int getIdOrdenDespacho() {
+		return id;
 	}
 
-	public void setNroOrdenDespacho(int nroDespacho) {
-		this.nroOrdenDespacho = nroDespacho;
+	public void setIdOrdenDespacho(int nroDespacho) {
+		this.id = nroDespacho;
 	}
 	public int getNroVenta() {
 		return nroVenta;
@@ -68,6 +74,8 @@ public class OrdenDespacho implements Serializable {
 		return this.solicitudes;
 	}
 	public void setSolicitudes(ArrayList<Solicitud> solicitudes) {
+		if(this.solicitudes == null)
+			this.solicitudes = new ArrayList<Solicitud>();
 		this.solicitudes = solicitudes;
 	}
 	public String getEstado() {
@@ -79,12 +87,16 @@ public class OrdenDespacho implements Serializable {
 	public OrdenDespacho(int nroDespacho, int nroVenta, Modulo modulo,
 			Date fecha, ArrayList<Solicitud> solicitudes,
 			String estado) {
-		this.nroOrdenDespacho = nroDespacho;
+		this.id = nroDespacho;
 		this.nroVenta = nroVenta;
 		this.modulo = modulo;
 		this.fecha = fecha;
 		this.solicitudes = solicitudes;
 		this.estado = estado;
+	}
+
+	public void agregarSolicitudArticulo(Solicitud solicitud) {
+		this.solicitudes.add(solicitud);
 	}
 	
 }
