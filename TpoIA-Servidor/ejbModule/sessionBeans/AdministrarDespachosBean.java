@@ -304,7 +304,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		// Notificar Entrega a Log&Monit
 		notificarEntregaDespacho ned = new notificarEntregaDespacho();
 		try {
-			String jsonData = ned.notificarEntregaDespachoLogistica(od.getNroOrdenDespacho(),am.getModulo("logistica").getRestDestinationLogisticaCambioEstado());
+			String jsonData = ned.notificarEntregaDespachoLogistica(od.getIdOrdenDespacho(),am.getModulo("logistica").getRestDestinationLogisticaCambioEstado());
 			JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonData);
 			String estado = json.getString("estado");
 			String mensaje = json.getString("mensaje");
