@@ -12,7 +12,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import com.thoughtworks.xstream.XStream;
+
 import sessionBeans.AdministradorModulos;
+import xml.RespuestaXML;
 
 
 public class notificarEntregaDespacho {
@@ -35,5 +38,26 @@ public class notificarEntregaDespacho {
 	    EntityUtils.consume(entity);
 		response.close();
 		return respuesta;
+	}
+	
+	public RespuestaXML notificarEntregaDespachoPortal(int nroVenta, String direccionIP)throws Exception {
+		try {			
+			String direccion = "http://" + direccionIP + ":8080/portalEstadoEntrega/ServidorEstadoEntregaBean";
+			ServidorEstadoEntregaBean service = new ServidorEstadoEntregaBeanServiceLocator()
+					.getServidorEstadoEntregaBeanPort(direccion);
+
+			String respuesta = service.notificarEntregaDespacho(nroVenta);
+			XStream xStream = new XStream();
+
+			xStream.processAnnotations(new Class[] { RespuestaXML.class });
+
+			RespuestaXML respuestaXml = (RespuestaXML) xStream
+					.fromXML(respuesta);
+
+			return respuestaXml;
+		} catch (Exception e) {
+			// TODO: handle exception
+			return null;
+		}
 	}
 }

@@ -54,7 +54,18 @@ public class ServidorEstadoEntregaBeanServiceLocator extends org.apache.axis.cli
         }
         return getServidorEstadoEntregaBeanPort(endpoint);
     }
-
+    
+    public servicesCaller.ServidorEstadoEntregaBean getServidorEstadoEntregaBeanPort(String direccion) throws javax.xml.rpc.ServiceException {
+        java.net.URL endpoint;
+         try {
+             endpoint = new java.net.URL(direccion);
+         }
+         catch (java.net.MalformedURLException e) {
+             throw new javax.xml.rpc.ServiceException(e);
+         }
+         return getServidorEstadoEntregaBeanPort(endpoint);
+     }
+    
     public servicesCaller.ServidorEstadoEntregaBean getServidorEstadoEntregaBeanPort(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
             servicesCaller.ServidorEstadoEntregaBeanServiceSoapBindingStub _stub = new servicesCaller.ServidorEstadoEntregaBeanServiceSoapBindingStub(portAddress, this);
