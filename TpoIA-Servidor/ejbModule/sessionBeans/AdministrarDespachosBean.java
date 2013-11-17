@@ -20,12 +20,15 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONSerializer;
+import net.sf.json.JSONObject;
 
-import org.hornetq.utils.json.JSONArray;
-import org.hornetq.utils.json.JSONException;
-import org.hornetq.utils.json.JSONObject;
+//import org.hornetq.utils.json.JSONArray;
+//import org.hornetq.utils.json.JSONException;
+//import org.hornetq.utils.json.JSONObject;
 
 import utils.Constantes;
 import utils.ItemSAJson;
@@ -287,8 +290,12 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	}
 
 	private OrdenDespacho buscarODporSA(int idSolicitud) {
-		// OrdenDespacho od;
-		return null;
+		Query query = em.createQuery("select od from OrdenDespacho od join od.solicitudes s where s.idSolicitud = ?");
+		query.setParameter(1, idSolicitud);
+		
+		OrdenDespacho od = (OrdenDespacho) query.getSingleResult();
+		//OrdenDespacho od = query.
+		return od;
 	}
 
 	public RespuestaXML recibirArticulos(String jsonData) {
@@ -302,18 +309,17 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 			int index = 0;
 			// Recupera el idModulo
-			int idModulo;
-
-			idModulo = json.getInt("idModulo");
+			int idModulo = json.getInt("idModulo");
 
 			if (idModulo == 0) {
 				respuesta.setEstado("ERROR");
-				respuesta.setMensaje("El módulo no existe");
+				respuesta.setMensaje("El modulo no existe");
+				return respuesta;
 			}
 
 			// Recupera el idSolicitud
 			int idSolicitud = json.getInt("idSolicitud");
-			if (idModulo != 0) {
+			if (idSolicitud != 0) {
 				/*
 				 * Busca si existe la solicitud de artículos y levanta la orden
 				 * de despacho
@@ -322,13 +328,15 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				if (od == null) {
 					respuesta.setEstado("ERROR");
 					respuesta.setMensaje("No existe orden de despacho asociada");
+					return respuesta;
 				}
 			} else {
 				respuesta.setEstado("ERROR");
-				respuesta.setMensaje("La solicitud de artículos no existe");
+				respuesta.setMensaje("La solicitud de articulos no existe");
+				return respuesta;
 			}
 
-			while (!items_sol.isNull(index)) {
+			while (index<items_sol.size()) {
 				JSONObject item = (JSONObject) items_sol.get(index);
 				// Se obtiene Código de Artículo y cantidad recibida
 				int codigo = item.getInt("codigo");
@@ -400,6 +408,9 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 					respuesta.setEstado("OK");
 					respuesta.setMensaje("OD completa");
 				} else {
+					od.setEstado("Parcial");
+					em.merge(od);
+					
 					respuesta.setEstado("OK");
 					respuesta.setMensaje("OD parcialmente cumplida");
 				}
@@ -407,7 +418,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				respuesta.setEstado("ERROR");
 				respuesta.setMensaje("No existen Items a Recibir");
 			}
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
