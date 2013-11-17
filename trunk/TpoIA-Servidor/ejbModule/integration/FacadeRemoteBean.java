@@ -155,8 +155,8 @@ public class FacadeRemoteBean implements FacadeRemote {
 
 	@Override
 	public ArrayList<ArticuloVO> getArticulos() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return adminArt.getAllArticulos();
 	}
 
 	@Override
