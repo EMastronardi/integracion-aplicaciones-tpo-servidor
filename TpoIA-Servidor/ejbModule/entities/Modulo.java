@@ -10,6 +10,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="Modulos")
@@ -22,6 +23,7 @@ public class Modulo {
 	private String usuario;
 	private String password;
 	private String jmsDestination;
+	private String restDestinationLogisticaCambioEstado;
 	private String tipo;
 	
 	public String getTipo() {
@@ -35,7 +37,7 @@ public class Modulo {
 	public Modulo() {
 	}
 	
-	public Modulo(int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination, String tipo) {
+	public Modulo(int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination, String restDLCE, String tipo) {
 		this.idModulo = idModulo;
 		this.ip = ip;
 		this.nombre = nombre;
@@ -43,6 +45,7 @@ public class Modulo {
 		this.usuario = usuario;
 		this.password = password;
 		this.jmsDestination = jmsDestination;
+		this.restDestinationLogisticaCambioEstado = restDLCE;
 		this.tipo = tipo;
 	}
 	public String getJmsDestination() {
@@ -94,4 +97,14 @@ public class Modulo {
 		this.codigo = codigo;
 	}
 
+
+	public String getRestDestinationLogisticaCambioEstado() {
+		return restDestinationLogisticaCambioEstado;
+	}
+
+	public void setRestDestinationLogisticaCambioEstado(
+			String restDestinationLogisticaCambioEstado) {
+		this.restDestinationLogisticaCambioEstado = restDestinationLogisticaCambioEstado;
+	}
+	
 }
