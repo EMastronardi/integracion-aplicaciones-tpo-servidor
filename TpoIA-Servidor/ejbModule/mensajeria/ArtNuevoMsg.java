@@ -17,7 +17,6 @@ import xml.ArticuloXML;
 import com.thoughtworks.xstream.XStream;
 
 import entities.Articulo;
-import entities.Deposito;
 import entities.Modulo;
 
 /**

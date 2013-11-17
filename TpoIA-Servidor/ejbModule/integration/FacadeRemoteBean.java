@@ -12,11 +12,11 @@ import sessionBeans.AdministradorModulos;
 import sessionBeans.AdministrarDespachos;
 import sessionBeans.AdministrarSistema;
 import sessionBeans.AdministrarUsuarios;
+import valueObjects.ArticuloVO;
 import valueObjects.ModuloVO;
 import valueObjects.UsuarioVO;
 import xml.RespuestaXML;
 import entities.Articulo;
-import entities.Deposito;
 import entities.Modulo;
 
 /**
@@ -39,7 +39,7 @@ public class FacadeRemoteBean implements FacadeRemote {
 	private AdministradorModulos adminMod;
 	
 	@EJB(beanName = "AdministradorArticulosBean")
-	private AdministradorArticulos amdinArt;
+	private AdministradorArticulos adminArt;
 
 	public FacadeRemoteBean() {
 		// TODO Auto-generated constructor stub
@@ -116,16 +116,9 @@ public class FacadeRemoteBean implements FacadeRemote {
 	}
 
 	@Override
-	public Deposito getDeposito(int idDeposito) {
-		// TODO Auto-generated method stub
-		Deposito dep = this.adminMod.getDeposito(idDeposito);
-		return dep;
-	}
-
-	@Override
 	public boolean addArticulo(int codigo, String nombre, int idModulo) {
 		// TODO Auto-generated method stub
-		return amdinArt.createArticulo(codigo, nombre, idModulo);
+		return adminArt.createArticulo(codigo, nombre, idModulo);
 	}
 
 	@Override
@@ -146,13 +139,26 @@ public class FacadeRemoteBean implements FacadeRemote {
 		// TODO Auto-generated method stub
 		return adminUser.eliminarUsuario(idUser);
 	}
-	
+
 	@Override
 	public RespuestaXML recibirArticulos(String jsonData){
 		
 		return adminOD.recibirArticulos(jsonData);
 	}
-	
+
+	@Override
+	public ArrayList<ArticuloVO> searchArticulos(String filtro, int valor) {
+		// TODO Auto-generated method stub
+		
+		return adminArt.searchBy(filtro, valor);
+	}
+
+	@Override
+	public ArrayList<ArticuloVO> getArticulos() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public ArrayList<ModuloVO> getAllModulos() {
 		// TODO Auto-generated method stub

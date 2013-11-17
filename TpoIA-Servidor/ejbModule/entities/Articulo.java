@@ -22,7 +22,7 @@ public class Articulo implements Serializable {
 	private String nombre;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="idDeposito")
-	private Deposito deposito;
+	private Modulo deposito;
 	
 	public Articulo(){
 		
@@ -39,13 +39,13 @@ public class Articulo implements Serializable {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public Deposito getDeposito() {
+	public Modulo getDeposito() {
 		return deposito;
 	}
-	public void setDeposito(Deposito deposito) {
+	public void setDeposito(Modulo deposito) {
 		this.deposito = deposito;
 	}
-	public Articulo(int nroArticulo, String nombre, Deposito deposito) {
+	public Articulo(int nroArticulo, String nombre, Modulo deposito) {
 		this.nroArticulo = nroArticulo;
 		this.nombre = nombre;
 		this.deposito = deposito;

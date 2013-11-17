@@ -1,11 +1,16 @@
 package sessionBeans;
 
+import java.util.ArrayList;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
+import valueObjects.ArticuloVO;
+import valueObjects.ModuloVO;
 import entities.Articulo;
-import entities.Deposito;
+import entities.Modulo;
 
 /**
  * Session Bean implementation class AdministradorArticulosBean
@@ -25,7 +30,7 @@ public class AdministradorArticulosBean implements AdministradorArticulos {
 	public boolean createArticulo(int codigo, String nombre, int idModulo) {
 		// TODO Auto-generated method stub
 		try {
-			Deposito dep = em.find(Deposito.class, idModulo);
+			Modulo dep = em.find(Modulo.class, idModulo);
 			Articulo art = new Articulo();
 			art.setDeposito(dep);
 			art.setNombre(nombre);
@@ -37,6 +42,64 @@ public class AdministradorArticulosBean implements AdministradorArticulos {
 			e.printStackTrace();
 			return true;
 		}
+	}
+
+	@Override
+	public ArrayList<ArticuloVO> getAllArticulos() {
+		// TODO Auto-generated method stub
+		Query q = em.createQuery("from Articulo");
+		ArrayList<Articulo> vecArt = (ArrayList<Articulo>) q.getResultList();
+		ArrayList<ArticuloVO> rslt = new ArrayList<ArticuloVO> ();
+		
+		for (Articulo articulo : vecArt) {
+			ArticuloVO artVO = new ArticuloVO();
+			ModuloVO mod = new ModuloVO();
+			mod.setCodigo(articulo.getDeposito().getCodigo());
+			mod.setIdModulo(articulo.getDeposito().getIdModulo());
+			mod.setIp(articulo.getDeposito().getIp());
+			mod.setJmsDestination(articulo.getDeposito().getJmsDestination());
+			mod.setNombre(articulo.getDeposito().getNombre());
+			mod.setPassword(articulo.getDeposito().getPassword());
+			mod.setTipo(articulo.getDeposito().getTipo());
+			mod.setUsuario(articulo.getDeposito().getUsuario());
+			artVO.setDeposito(mod);
+			artVO.setNombre(articulo.getNombre());
+			artVO.setNroArticulo(articulo.getNroArticulo());
+			rslt.add(artVO);
+		}
+		return rslt;
+	}
+
+	@Override
+	public ArrayList<ArticuloVO> searchBy(String filtro, int value) {
+		// TODO Auto-generated method stub
+		Query q =  null;
+		if(filtro.equals("codigo")){
+			q = em.createQuery("select a from Articulo a where a.nroArticulo=:value");
+		}else{
+			q = em.createQuery("select a from Articulo a, Modulo m where m = a.deposito AND m.idModulo=:value");
+		}
+		q.setParameter("value", value);
+		ArrayList<Articulo> vecArt = (ArrayList<Articulo>) q.getResultList();
+		ArrayList<ArticuloVO> rslt = new ArrayList<ArticuloVO> ();
+		
+		for (Articulo articulo : vecArt) {
+			ArticuloVO artVO = new ArticuloVO();
+			ModuloVO mod = new ModuloVO();
+			mod.setCodigo(articulo.getDeposito().getCodigo());
+			mod.setIdModulo(articulo.getDeposito().getIdModulo());
+			mod.setIp(articulo.getDeposito().getIp());
+			mod.setJmsDestination(articulo.getDeposito().getJmsDestination());
+			mod.setNombre(articulo.getDeposito().getNombre());
+			mod.setPassword(articulo.getDeposito().getPassword());
+			mod.setTipo(articulo.getDeposito().getTipo());
+			mod.setUsuario(articulo.getDeposito().getUsuario());
+			artVO.setDeposito(mod);
+			artVO.setNombre(articulo.getNombre());
+			artVO.setNroArticulo(articulo.getNroArticulo());
+			rslt.add(artVO);
+		}
+		return rslt;
 	}
     
 }
