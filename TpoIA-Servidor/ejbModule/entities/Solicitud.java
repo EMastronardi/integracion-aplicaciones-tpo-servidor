@@ -14,49 +14,46 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name= "Solicitudes")
+@Table(name = "Solicitudes")
 public class Solicitud {
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private int idSolicitud;
-	
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idSolicitud")
 	private List<ItemSolicitud> items;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "idDeposito")
-	private Modulo deposito;
-	
-	public Modulo getDeposito() {
-		return deposito;
+
+	public void setItems(List<ItemSolicitud> items) {
+		this.items = items;
 	}
-	public void setDeposito(Modulo deposito) {
-		this.deposito = deposito;
-	}
+
 	public int getIdSolicitud() {
-		return idSolicitud;
+		return id;
 	}
 	public void setIdSolicitud(int idSolicitud) {
-		this.idSolicitud = idSolicitud;
+		this.id = idSolicitud;
 	}
+
 	public List<ItemSolicitud> getItems() {
 		return items;
 	}
+
 	public void setItems(ArrayList<ItemSolicitud> items) {
 		this.items = items;
 	}
 	public Solicitud(int idSolicitud, ArrayList<ItemSolicitud> items) {
-		this.idSolicitud = idSolicitud;
+		this.id = idSolicitud;
 		this.items = items;
 	}
+
 	public Solicitud() {
+		this.items = new ArrayList<ItemSolicitud>();
 	}
-	public void AddArticulo(ItemSolicitud iSol) {
-		if(this.items == null){
-			this.items = new ArrayList<ItemSolicitud>();
-		}
-		this.items.add(iSol);
+	
+	public void agregarItemsSolicitudArticulo(List<ItemSolicitud> lista) {
+		this.items.addAll(lista);
+
 	}
 
 }
