@@ -41,11 +41,11 @@ public class AdministradorModulosBean implements AdministradorModulos {
 	}
 
 	@Override
-	public boolean createModulo(String tipo, int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination) {
+	public boolean createModulo(String tipo, int idModulo, String ip, String nombre, String codigo, String usuario, String password, String jmsDestination, String restDestinationLogisticaCambioEstado) {
 		// TODO Auto-generated method stub
 		
 		try {
-			Modulo mod = new Modulo(idModulo, ip, nombre, codigo, usuario, password, jmsDestination, tipo);
+			Modulo mod = new Modulo(idModulo, ip, nombre, codigo, usuario, password, jmsDestination, tipo, restDestinationLogisticaCambioEstado);
 			em.persist(mod);
 			return true;
 		} catch (Exception e) {
@@ -72,7 +72,7 @@ public class AdministradorModulosBean implements AdministradorModulos {
 	@Override
 	public boolean updateModulo(String tipo, int idModulo, String ip, String nombre,
 			String codigo, String usuario, String password,
-			String jmsDestination){
+			String jmsDestination, String restDestinationLogisticaCambioEstado){
 		// TODO Auto-generated method stub
 				try {
 					Modulo mod = (Modulo) em.find(Modulo.class, idModulo);
@@ -111,7 +111,8 @@ public class AdministradorModulosBean implements AdministradorModulos {
 			mod.setPassword(modulo.getPassword());
 			mod.setUsuario(modulo.getUsuario());
 			mod.setNombre(modulo.getNombre());
-			mod.setTipo(modulo.isModulo());
+			mod.setTipo(modulo.getTipo());
+			mod.setRestDestinationLogisticaCambioEstado(modulo.getRestDestinationLogisticaCambioEstado());
 			rslt.add(mod);			
 		}
 		return rslt;
