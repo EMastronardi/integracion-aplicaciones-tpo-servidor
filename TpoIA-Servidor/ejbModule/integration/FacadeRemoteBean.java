@@ -14,6 +14,7 @@ import sessionBeans.AdministrarSistema;
 import sessionBeans.AdministrarUsuarios;
 import valueObjects.ArticuloVO;
 import valueObjects.ModuloVO;
+import valueObjects.OrdenDespachoVO;
 import valueObjects.UsuarioVO;
 import xml.RespuestaXML;
 import entities.Articulo;
@@ -165,6 +166,24 @@ public class FacadeRemoteBean implements FacadeRemote {
 		ArrayList<ModuloVO> vo = adminMod.getAllModulos();
 		
 		return vo;
+	}
+
+	@Override
+	public ArrayList<OrdenDespachoVO> getAllOrdenes() {
+		// TODO Auto-generated method stub
+		return adminOD.getAllOrdenesDespacho();
+	}
+
+	@Override
+	public ArrayList<OrdenDespachoVO> searchOrdenes(String filtro, int valor) {
+		// TODO Auto-generated method stub
+		return adminOD.searchOrdenesDespacho(filtro, valor);
+	}
+
+	@Override
+	public OrdenDespachoVO getOrdenDespachoBtId(int nroOrdenDespacho) {
+		// TODO Auto-generated method stub
+		return adminOD.getOrdenDespacho(nroOrdenDespacho);
 	}
 
 }
