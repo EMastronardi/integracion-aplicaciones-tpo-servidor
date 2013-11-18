@@ -45,7 +45,16 @@ public class AdministradorModulosBean implements AdministradorModulos {
 		// TODO Auto-generated method stub
 		
 		try {
-			Modulo mod = new Modulo(idModulo, ip, nombre, codigo, usuario, password, jmsDestination, tipo, restDestinationLogisticaCambioEstado);
+			Modulo mod = new Modulo();
+			mod.setTipo(tipo);
+			mod.setIdModulo(idModulo);
+			mod.setIp(ip);
+			mod.setNombre(nombre);
+			mod.setCodigo(codigo);
+			mod.setJmsDestination(jmsDestination);
+			mod.setRestDestinationLogisticaCambioEstado(restDestinationLogisticaCambioEstado);
+			mod.setPassword(password);
+			mod.setUsuario(usuario);
 			em.persist(mod);
 			return true;
 		} catch (Exception e) {
