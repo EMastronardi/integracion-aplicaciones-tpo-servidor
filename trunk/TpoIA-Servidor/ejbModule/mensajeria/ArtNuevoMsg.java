@@ -31,10 +31,10 @@ public class ArtNuevoMsg implements MessageListener {
 	/**
 	 * Default constructor.
 	 */
-	@EJB(beanName = "FacadeRemoteBean")
+	@EJB
 	private FacadeRemote fachada;
 
-	@EJB(beanName = "AdministradorModulosBean")
+	@EJB
 	private AdministradorModulos adminMod;
 	public ArtNuevoMsg() {
 		// TODO Auto-generated constructor stub

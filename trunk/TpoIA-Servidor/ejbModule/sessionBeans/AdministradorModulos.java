@@ -2,12 +2,12 @@ package sessionBeans;
 
 import java.util.ArrayList;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 import valueObjects.ModuloVO;
 import entities.Modulo;
 
-@Remote
+@Local
 public interface AdministradorModulos {
 	public Modulo getModulo (int idModulo);
 	public Modulo getModulo (String tipo);
