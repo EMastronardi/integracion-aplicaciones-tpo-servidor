@@ -3,6 +3,9 @@ package xml;
 import java.util.ArrayList;
 import java.util.List;
 
+import entities.ItemSolicitud;
+import entities.Solicitud;
+
 public class SolicitudXML {
 	/*
 	<solicitudArticulos>
@@ -19,6 +22,17 @@ public class SolicitudXML {
 	private String idSolicitud;
 	private String idModulo;
 	private List<ItemXML> articulos;
+	public SolicitudXML(Solicitud solicitud) {
+		
+		this.idSolicitud = String.valueOf(solicitud.getIdSolicitud());
+		this.idModulo = String.valueOf(solicitud.getItems().get(0).getArticulo().getModulo().getIdModulo());
+		this.articulos = new ArrayList<ItemXML>();
+		for (ItemSolicitud itmSol : solicitud.getItems()) {
+			ItemXML itmXml = new ItemXML(itmSol.getArticulo().getNroArticulo(), itmSol.getCantidad());
+			articulos.add(itmXml);
+		}
+		
+	}
 	public String getIdSolicitud() {
 		return idSolicitud;
 	}
