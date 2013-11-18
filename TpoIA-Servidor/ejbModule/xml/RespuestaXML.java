@@ -7,8 +7,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.thoughtworks.xstream.annotations.XStreamAliasType;
+
 @XmlRootElement(name="resultado")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XStreamAliasType(value="resultado")
 public class RespuestaXML implements Serializable{
 	
 	@XmlAttribute
