@@ -1,6 +1,7 @@
 package sessionBeans;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -57,12 +58,14 @@ public class AdministrarUsuariosBean implements AdministrarUsuarios {
 
 	public boolean validarUsuario(String username, String password) {
 		Query q = em
-				.createQuery("SELECT OBJECT(u) FROM Usuario u WHERE u.nombre = :nombre and u.password = :password");
+				.createQuery("SELECT u FROM Usuario u WHERE u.nombre = :nombre and u.password = :password");
 		q.setParameter("nombre", username);
 		q.setParameter("password", password);
-		Usuario u =  (Usuario) q.getSingleResult();
-		if(u != null)
-			return true;
+
+			List<Usuario> u =  (List<Usuario>) q.getResultList();
+			if(u!= null && u.size()>=1){
+				return true;
+			}
 		return false;
 	}
 
