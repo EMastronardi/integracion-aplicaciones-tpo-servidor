@@ -7,6 +7,7 @@ import javax.ejb.Remote;
 import valueObjects.ArticuloVO;
 import valueObjects.ModuloVO;
 import valueObjects.OrdenDespachoVO;
+import valueObjects.SolicitudVO;
 import valueObjects.UsuarioVO;
 import xml.RespuestaXML;
 import entities.Articulo;
@@ -32,5 +33,9 @@ public interface FacadeRemote {
 	public RespuestaXML recibirArticulos(String jsonData);
 	public ArrayList<OrdenDespachoVO> getAllOrdenes();
 	public ArrayList<OrdenDespachoVO> searchOrdenes(String filtro, int valor);
-	public OrdenDespachoVO getOrdenDespachoBtId(int nroOrdenDespacho);
+	public OrdenDespachoVO getOrdenDespachoById(int nroOrdenDespacho);
+	public ArrayList<SolicitudVO> getAllSolicitudes();
+	public ArrayList<SolicitudVO> searchSolicitudes(String filtro, int valor);
+	public SolicitudVO getSolicitudById(int idsolicitud);
+
 }
