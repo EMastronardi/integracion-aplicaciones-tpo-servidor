@@ -9,12 +9,14 @@ import javax.jws.WebService;
 
 import sessionBeans.AdministradorArticulos;
 import sessionBeans.AdministradorModulos;
+import sessionBeans.AdministradorSolicitudes;
 import sessionBeans.AdministrarDespachos;
 import sessionBeans.AdministrarSistema;
 import sessionBeans.AdministrarUsuarios;
 import valueObjects.ArticuloVO;
 import valueObjects.ModuloVO;
 import valueObjects.OrdenDespachoVO;
+import valueObjects.SolicitudVO;
 import valueObjects.UsuarioVO;
 import xml.RespuestaXML;
 import entities.Articulo;
@@ -42,6 +44,8 @@ public class FacadeRemoteBean implements FacadeRemote {
 	@EJB(beanName = "AdministradorArticulosBean")
 	private AdministradorArticulos adminArt;
 
+	@EJB(beanName = "AdministradorSolicitudesBean")
+	private AdministradorSolicitudes adminSol;
 	public FacadeRemoteBean() {
 		// TODO Auto-generated constructor stub
 	}
@@ -181,9 +185,28 @@ public class FacadeRemoteBean implements FacadeRemote {
 	}
 
 	@Override
-	public OrdenDespachoVO getOrdenDespachoBtId(int nroOrdenDespacho) {
+	public OrdenDespachoVO getOrdenDespachoById(int nroOrdenDespacho) {
 		// TODO Auto-generated method stub
 		return adminOD.getOrdenDespacho(nroOrdenDespacho);
+	}
+
+	@Override
+	public ArrayList<SolicitudVO> getAllSolicitudes() {
+		// TODO Auto-generated method stub
+		ArrayList<SolicitudVO> sol =adminSol.getAllSolicitudes();
+		return sol;
+	}
+
+	@Override
+	public ArrayList<SolicitudVO> searchSolicitudes(String filtro, int valor) {
+		// TODO Auto-generated method stub
+		return adminSol.searchSolicitudes(filtro, valor);
+	}
+
+	@Override
+	public SolicitudVO getSolicitudById(int idsolicitud) {
+		// TODO Auto-generated method stub
+		return adminSol.getSolicitudById(idsolicitud);
 	}
 
 }
