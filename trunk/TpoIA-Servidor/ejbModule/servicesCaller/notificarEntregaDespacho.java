@@ -29,7 +29,7 @@ public class notificarEntregaDespacho {
 		
 		String json = "{\"nroDespacho\": " + String.valueOf(nroOrdenDespacho) + "}";
 		CloseableHttpClient httpclient = HttpClients.createDefault();
-		HttpPost httpPost = new HttpPost("http://" + direccion + "/LogisticaMonitoreoWEB/rest/LogisticaMonitoreo/notificarEntregaDespacho");
+		HttpPost httpPost = new HttpPost("http://" + direccion);
 		httpPost.addHeader("Content-Type","application/json");
 		httpPost.setEntity(new StringEntity(json));
 		CloseableHttpResponse  response = httpclient.execute(httpPost);
