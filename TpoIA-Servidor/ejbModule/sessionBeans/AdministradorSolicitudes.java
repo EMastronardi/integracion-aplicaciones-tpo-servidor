@@ -2,12 +2,12 @@ package sessionBeans;
 
 import java.util.ArrayList;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
-import entities.Solicitud;
 import valueObjects.SolicitudVO;
+import entities.Solicitud;
 
-@Remote
+@Local
 public interface AdministradorSolicitudes {
 	public ArrayList<SolicitudVO> getAllSolicitudes();
 	public SolicitudVO getSolicitudById(int idsolicitud);

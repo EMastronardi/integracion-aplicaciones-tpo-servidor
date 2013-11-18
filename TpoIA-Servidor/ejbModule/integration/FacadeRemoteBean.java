@@ -29,22 +29,22 @@ import entities.Modulo;
 @WebService
 public class FacadeRemoteBean implements FacadeRemote {
 	
-	@EJB(beanName = "AdministrarUsuariosBean")
+	@EJB
 	private AdministrarUsuarios adminUser;
 
-	@EJB(beanName = "AdministrarDespachosBean")
+	@EJB
 	private AdministrarDespachos adminOD;
 	
-	@EJB(beanName = "AdministrarSistemaBean")
+	@EJB
 	private AdministrarSistema adminSis;
 	
-	@EJB(beanName = "AdministradorModulosBean")
+	@EJB
 	private AdministradorModulos adminMod;
 	
-	@EJB(beanName = "AdministradorArticulosBean")
+	@EJB
 	private AdministradorArticulos adminArt;
 
-	@EJB(beanName = "AdministradorSolicitudesBean")
+	@EJB
 	private AdministradorSolicitudes adminSol;
 	public FacadeRemoteBean() {
 		// TODO Auto-generated constructor stub
@@ -62,18 +62,6 @@ public class FacadeRemoteBean implements FacadeRemote {
 		// TODO Auto-generated method stub
 		return adminUser.agregarUsuario(username, password);
 	}
-
-	// WebServices
-	@WebMethod
-	public String procesarOrdenDespacho(String  valorXml) {
-		try {
-			return adminOD.procesarSolicitudDespacho(valorXml);
-
-		} catch (Exception e) {
-			return "Error al procesarOrdenDespacho";
-		}
-	}
-
 
 	@WebMethod(exclude=true)
 	public boolean validarUsuarioLogueado(String usuario) {

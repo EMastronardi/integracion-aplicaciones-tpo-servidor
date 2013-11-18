@@ -1,9 +1,7 @@
 package sessionBeans;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -15,11 +13,6 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.naming.Context;
@@ -30,14 +23,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONSerializer;
 import net.sf.json.JSONObject;
-
-//import org.hornetq.utils.json.JSONArray;
-//import org.hornetq.utils.json.JSONException;
-//import org.hornetq.utils.json.JSONObject;
-
-import servicesCaller.notificarEntregaDespacho;
+import net.sf.json.JSONSerializer;
 import utils.ItemSAJson;
 import valueObjects.ArticuloVO;
 import valueObjects.ItemSolicitudVO;
@@ -49,7 +36,6 @@ import xml.OrdenDespachoXML;
 import xml.RespuestaXML;
 import xml.SolicitudXML;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.DateConverter;
 
@@ -58,6 +44,10 @@ import entities.ItemSolicitud;
 import entities.Modulo;
 import entities.OrdenDespacho;
 import entities.Solicitud;
+//import org.hornetq.utils.json.JSONArray;
+//import org.hornetq.utils.json.JSONException;
+//import org.hornetq.utils.json.JSONObject;
+import servicesCaller.notificarEntregaDespacho;
 
 /**
  * Session Bean implementation class Despacho
@@ -68,10 +58,10 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	@PersistenceContext
 	private EntityManager em;
 
-	@EJB(beanName = "AdministradorModulosBean")
+	@EJB
 	private AdministradorModulos am;
 
-	@EJB(beanName = "AdministrarSolicitudesBean")
+	@EJB
 	private AdministradorSolicitudes as;
 
 	public AdministrarDespachosBean() {
@@ -139,15 +129,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 				// Envio a cada deposito la solicitud correspondiente
 				for (Solicitud s : od.getSolicitudes()) {
-					try {
-						solicitarADeposito2(s);
-					} catch (JMSException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NamingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					solicitarADeposito(s);
 				}
 				resultado = "OK";
 
@@ -168,76 +150,14 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	// Aca hay que mandar al deposito correspondiente al Articulo el pedido del
 	// mismo, con su cantidad
 
-	private void solicitarADeposito2(Solicitud solicitud) throws JMSException,
-			NamingException {
-		QueueConnection qCon = null;
-		QueueSession qSession = null;
-
-		// Obtengo la parametrizacion del servicio
-		// int numeroOdvAsignada = adminParam.getNumeroOdvAsignada();
-		// String urlProviderKey = Constantes.COLA_SOL_COMPRA_PROVIDER_URL + "_"
-		// + numeroOdvAsignada;
-		String urlProvider = "remote://localhost:4447 ";
-		// String queueNameKey = Constantes.COLA_RECIBIR_SOL_COMPRA + "_" +
-		// numeroOdvAsignada;
-		String queueName = "queue/procesarOrdenDespacho";
-
-		// Inicializo el contexto
-		Hashtable<String, String> props = new Hashtable<String, String>();
-		props.put(InitialContext.INITIAL_CONTEXT_FACTORY,
-				"org.jnp.interfaces.NamingContextFactory");
-		props.put("java.naming.factory.initial",
-				"org.jboss.naming.remote.client.InitialContextFactory");
-		props.put(Context.URL_PKG_PREFIXES, "org.jboss.ejb.client.naming");
-
-		props.put(InitialContext.PROVIDER_URL, urlProvider);
-		Context ctx = new InitialContext(props);
-
-		// buscar la Connection Factory en JNDI
-		QueueConnectionFactory qfactory = (QueueConnectionFactory) ctx
-				.lookup("ConnectionFactory");
-		// buscar la Cola en JNDI
-		Queue queue = (Queue) ctx.lookup(queueName);
-
-		// crear la connection y la session a partir de la connection
-		qCon = qfactory.createQueueConnection();
-		qSession = qCon.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-
-		// crear un producer para enviar mensajes usando la session
-		QueueSender qSender = qSession.createSender(queue);
-		// crear un mensaje de tipo text y setearle el contenido
-		TextMessage message = qSession.createTextMessage();
-		XStream xstream = new XStream();
-		SolicitudXML solXml = new SolicitudXML(solicitud);
-
-		xstream.alias("SolicitudArticulos", SolicitudXML.class);
-		xstream.alias("articulos", ItemXML.class);
-
-		String xml = xstream.toXML(solXml);
-
-		message.setText(xml);
-
-		// enviar el mensaje
-		qSender.send(message);
-
-		// Cerrar conexiones y sesiones
-		if (qCon != null) {
-			qCon.close();
-		}
-
-		if (qSession != null) {
-			qSession.close();
-		}
-	}
-
 	private void solicitarADeposito(Solicitud solicitud) {
 
 		// a que deposito
 
 		String DEFAULT_CONNECTION_FACTORY = "jms/RemoteConnectionFactory";
 		String DEFAULT_DESTINATION = "queue/procesarOrdenDespacho";
-		String DEFAULT_USERNAME = "prod";
-		String DEFAULT_PASSWORD = "prod1234";
+		String DEFAULT_USERNAME = "test1";
+		String DEFAULT_PASSWORD = "test12341";
 		String INITIAL_CONTEXT_FACTORY = "org.jboss.naming.remote.client.InitialContextFactory";
 		String PROVIDER_URL = "remote://"
 				+ solicitud.getItems().get(0).getArticulo().getModulo().getIp()
