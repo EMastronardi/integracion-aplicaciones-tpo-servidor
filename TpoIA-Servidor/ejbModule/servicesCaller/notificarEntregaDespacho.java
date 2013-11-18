@@ -45,7 +45,7 @@ public class notificarEntregaDespacho {
 			String direccion = "http://" + direccionIP + ":8080/portalEstadoEntrega/ServidorEstadoEntregaBean";
 			ServidorEstadoEntregaBean service = new ServidorEstadoEntregaBeanServiceLocator()
 					.getServidorEstadoEntregaBeanPort(direccion);
-
+			
 			String respuesta = service.notificarEntregaDespacho(nroVenta);
 			XStream xStream = new XStream();
 
@@ -53,7 +53,6 @@ public class notificarEntregaDespacho {
 
 			RespuestaXML respuestaXml = (RespuestaXML) xStream
 					.fromXML(respuesta);
-
 			return respuestaXml;
 		} catch (Exception e) {
 			// TODO: handle exception
