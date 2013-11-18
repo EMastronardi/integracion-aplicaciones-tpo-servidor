@@ -70,13 +70,9 @@ public class AdministradorSolicitudesBean implements AdministradorSolicitudes {
 
 	@Override
 	public SolicitudVO getSolicitudById(int idsolicitud) {
-		// TODO Auto-generated method stub
-		Query q = em.createQuery("from Solicitud s where s.id=:value");
-		q.setParameter("value",idsolicitud);
-		
-		Solicitud sol = (Solicitud) q.getSingleResult();
+		// TODO Auto-generated method stub			
+		Solicitud sol = em.find(Solicitud.class, idsolicitud);
 		SolicitudVO rslt = new SolicitudVO();
-	
 		rslt.setIdSolicitud(sol.getIdSolicitud());
 		List<ItemSolicitudVO> listitm = new ArrayList<ItemSolicitudVO>();
 		for (ItemSolicitud itm : sol.getItems()) {
@@ -101,7 +97,7 @@ public class AdministradorSolicitudesBean implements AdministradorSolicitudes {
 	@Override
 	public ArrayList<SolicitudVO> searchSolicitudes(String filtro, int valor) {
 		// TODO Auto-generated method stub
-		Query q = em.createQuery("from Solicitud where id =:vlue");
+		Query q = em.createQuery("select s from Solicitud s where s.id =:value");
 		q.setParameter("value",valor);
 		ArrayList<Solicitud> solicitudes = (ArrayList<Solicitud>) q.getResultList();
 		ArrayList<SolicitudVO> rslt = new ArrayList<SolicitudVO>();
