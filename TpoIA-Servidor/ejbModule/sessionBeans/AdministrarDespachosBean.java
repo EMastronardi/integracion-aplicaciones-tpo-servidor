@@ -33,6 +33,11 @@ import net.sf.json.JSONObject;
 
 import servicesCaller.notificarEntregaDespacho;
 import utils.ItemSAJson;
+import valueObjects.ArticuloVO;
+import valueObjects.ItemSolicitudVO;
+import valueObjects.ModuloVO;
+import valueObjects.OrdenDespachoVO;
+import valueObjects.SolicitudVO;
 import xml.ItemXML;
 import xml.OrdenDespachoXML;
 import xml.RespuestaXML;
@@ -446,6 +451,161 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public ArrayList<OrdenDespachoVO> getAllOrdenesDespacho() {
+		// TODO Auto-generated method stub
+		Query q = em.createQuery("from OrdenDespacho");
+
+		ArrayList<OrdenDespacho>  vec = (ArrayList<OrdenDespacho>) q.getResultList();
+		ArrayList<OrdenDespachoVO> rslt = new ArrayList<OrdenDespachoVO>();
+		for (OrdenDespacho od : vec) {
+			OrdenDespachoVO vo = new OrdenDespachoVO();
+			vo.setEstado(od.getEstado());
+			vo.setFecha(od.getFecha());
+			vo.setIdOrdenDespacho(od.getIdOrdenDespacho());
+			vo.setNroVenta(od.getNroVenta());
+			//Conversion Modulo > ModuloVO
+			ModuloVO mvo = new ModuloVO();
+			mvo.setCodigo(od.getModulo().getCodigo());
+			mvo.setIdModulo(od.getModulo().getIdModulo());
+			mvo.setIp(od.getModulo().getIp());
+			mvo.setJmsDestination(od.getModulo().getJmsDestination());
+			mvo.setNombre(od.getModulo().getNombre());
+			mvo.setPassword(od.getModulo().getPassword());
+			mvo.setRestDestinationLogisticaCambioEstado(od.getModulo().getRestDestinationLogisticaCambioEstado());
+			mvo.setTipo(od.getModulo().getTipo());
+			mvo.setUsuario(od.getModulo().getUsuario());
+			vo.setModulo(mvo);
+			ArrayList<SolicitudVO> vecsol= new ArrayList<SolicitudVO>();
+			///
+			for (Solicitud sol : od.getSolicitudes()) {
+				SolicitudVO solvo = new SolicitudVO();
+				solvo.setIdSolicitud(sol.getIdSolicitud());
+				List<ItemSolicitudVO> listitm = new ArrayList<ItemSolicitudVO>();
+				for (ItemSolicitud itm : sol.getItems()) {
+					ItemSolicitudVO itmvo = new ItemSolicitudVO();
+					itmvo.setCantidad(itm.getCantidad());
+					itmvo.setCantidadRecibida(itm.getCantidadRecibida());
+					ArticuloVO artvo = new ArticuloVO();
+					artvo.setNombre(itm.getArticulo().getNombre());
+					artvo.setNroArticulo(itm.getArticulo().getNroArticulo());
+					itmvo.setArticulo(artvo);
+					//No se MAPEA modulos para los articulos!!!
+					listitm.add(itmvo);
+				}
+				solvo.setItems(listitm);
+				vecsol.add(solvo);
+			}
+			vo.setSolicitudes(vecsol);
+			rslt.add(vo);
+		}
+		return rslt;
+	}
+
+	@Override
+	public ArrayList<OrdenDespachoVO> searchOrdenesDespacho(String filtro, int valor) {
+		// TODO Auto-generated method stub
+		Query q =  null;
+		if(filtro.equals("nrorden")){
+			q = em.createQuery("select od from OrdenDespacho od where od.id=:value");
+		}else{
+			q = em.createQuery("select od from OrdenDespacho od, Modulo m where m = od.modulo AND m.idModulo=:value");
+		}
+		q.setParameter("value", valor);
+		ArrayList<OrdenDespacho>  vec = (ArrayList<OrdenDespacho>) q.getResultList();
+		ArrayList<OrdenDespachoVO> rslt = new ArrayList<OrdenDespachoVO>();
+		for (OrdenDespacho od : vec) {
+			OrdenDespachoVO vo = new OrdenDespachoVO();
+			vo.setEstado(od.getEstado());
+			vo.setFecha(od.getFecha());
+			vo.setIdOrdenDespacho(od.getIdOrdenDespacho());
+			vo.setNroVenta(od.getNroVenta());
+			//Conversion Modulo > ModuloVO
+			ModuloVO mvo = new ModuloVO();
+			mvo.setCodigo(od.getModulo().getCodigo());
+			mvo.setIdModulo(od.getModulo().getIdModulo());
+			mvo.setIp(od.getModulo().getIp());
+			mvo.setJmsDestination(od.getModulo().getJmsDestination());
+			mvo.setNombre(od.getModulo().getNombre());
+			mvo.setPassword(od.getModulo().getPassword());
+			mvo.setRestDestinationLogisticaCambioEstado(od.getModulo().getRestDestinationLogisticaCambioEstado());
+			mvo.setTipo(od.getModulo().getTipo());
+			mvo.setUsuario(od.getModulo().getUsuario());
+			vo.setModulo(mvo);
+			ArrayList<SolicitudVO> vecsol= new ArrayList<SolicitudVO>();
+			///
+			for (Solicitud sol : od.getSolicitudes()) {
+				SolicitudVO solvo = new SolicitudVO();
+				solvo.setIdSolicitud(sol.getIdSolicitud());
+				List<ItemSolicitudVO> listitm = new ArrayList<ItemSolicitudVO>();
+				for (ItemSolicitud itm : sol.getItems()) {
+					ItemSolicitudVO itmvo = new ItemSolicitudVO();
+					itmvo.setCantidad(itm.getCantidad());
+					itmvo.setCantidadRecibida(itm.getCantidadRecibida());
+					ArticuloVO artvo = new ArticuloVO();
+					artvo.setNombre(itm.getArticulo().getNombre());
+					artvo.setNroArticulo(itm.getArticulo().getNroArticulo());
+					itmvo.setArticulo(artvo);
+					//No se MAPEA modulos para los articulos!!!
+					listitm.add(itmvo);
+				}
+				solvo.setItems(listitm);
+				vecsol.add(solvo);
+			}
+			vo.setSolicitudes(vecsol);
+			rslt.add(vo);
+		}
+		return rslt;
+	}
+
+	@Override
+	public OrdenDespachoVO getOrdenDespacho(int nroOrdenDespacho) {
+		// TODO Auto-generated method stub
+		Query q = em.createQuery("select od from OrdenDespacho od where od.id=:value");
+		
+		q.setParameter("value", nroOrdenDespacho);
+		OrdenDespacho  od = (OrdenDespacho) q.getSingleResult();
+		
+		OrdenDespachoVO vo = new OrdenDespachoVO();
+		vo.setEstado(od.getEstado());
+		vo.setFecha(od.getFecha());
+		vo.setIdOrdenDespacho(od.getIdOrdenDespacho());
+		vo.setNroVenta(od.getNroVenta());
+		//Conversion Modulo > ModuloVO
+		ModuloVO mvo = new ModuloVO();
+		mvo.setCodigo(od.getModulo().getCodigo());
+		mvo.setIdModulo(od.getModulo().getIdModulo());
+		mvo.setIp(od.getModulo().getIp());
+		mvo.setJmsDestination(od.getModulo().getJmsDestination());
+		mvo.setNombre(od.getModulo().getNombre());
+		mvo.setPassword(od.getModulo().getPassword());
+		mvo.setRestDestinationLogisticaCambioEstado(od.getModulo().getRestDestinationLogisticaCambioEstado());
+		mvo.setTipo(od.getModulo().getTipo());
+		mvo.setUsuario(od.getModulo().getUsuario());
+		vo.setModulo(mvo);
+		ArrayList<SolicitudVO> vecsol= new ArrayList<SolicitudVO>();
+		for (Solicitud sol : od.getSolicitudes()) {
+			SolicitudVO solvo = new SolicitudVO();
+			solvo.setIdSolicitud(sol.getIdSolicitud());
+			List<ItemSolicitudVO> listitm = new ArrayList<ItemSolicitudVO>();
+			for (ItemSolicitud itm : sol.getItems()) {
+				ItemSolicitudVO itmvo = new ItemSolicitudVO();
+				itmvo.setCantidad(itm.getCantidad());
+				itmvo.setCantidadRecibida(itm.getCantidadRecibida());
+				ArticuloVO artvo = new ArticuloVO();
+				artvo.setNombre(itm.getArticulo().getNombre());
+				artvo.setNroArticulo(itm.getArticulo().getNroArticulo());
+				itmvo.setArticulo(artvo);
+				//No se MAPEA modulos para los articulos!!!
+				listitm.add(itmvo);
+			}
+			solvo.setItems(listitm);
+			vecsol.add(solvo);
+		}
+		vo.setSolicitudes(vecsol);
+		return vo;
 	}
 
 }
