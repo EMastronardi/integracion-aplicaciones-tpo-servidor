@@ -155,9 +155,9 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		// a que deposito
 
 		String DEFAULT_CONNECTION_FACTORY = "jms/RemoteConnectionFactory";
-		String DEFAULT_DESTINATION = "queue/procesarOrdenDespacho";
-		String DEFAULT_USERNAME = "test1";
-		String DEFAULT_PASSWORD = "test12341";
+		String DEFAULT_DESTINATION = solicitud.getItems().get(0).getArticulo().getModulo().getJmsDestination();
+		String DEFAULT_USERNAME = solicitud.getItems().get(0).getArticulo().getModulo().getUsuario();
+		String DEFAULT_PASSWORD = solicitud.getItems().get(0).getArticulo().getModulo().getPassword();
 		String INITIAL_CONTEXT_FACTORY = "org.jboss.naming.remote.client.InitialContextFactory";
 		String PROVIDER_URL = "remote://"
 				+ solicitud.getItems().get(0).getArticulo().getModulo().getIp()
@@ -391,8 +391,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		notificarEntregaDespacho ned = new notificarEntregaDespacho();
 		try {
 			String jsonData = ned.notificarEntregaDespachoLogistica(od
-					.getIdOrdenDespacho(), am.getModulo("logistica")
-					.getRestDestinationLogisticaCambioEstado());
+					.getIdOrdenDespacho(),am.getModulo("logistica").getIp()+"8080"+am.getModulo("logistica").getRestDestinationLogisticaCambioEstado());
 			JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonData);
 			String estado = json.getString("estado");
 			String mensaje = json.getString("mensaje");
@@ -406,8 +405,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 		// Notificar Entrega a Portal Web
 		try {
-			RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(
-					od.getNroVenta(), od.getModulo().getIp());
+			RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(od.getNroVenta(), od.getModulo().getIp());
 			// Guardar en el log interno
 			System.out.println(respuesta.getEstado());
 			System.out.println(respuesta.getMensaje());
