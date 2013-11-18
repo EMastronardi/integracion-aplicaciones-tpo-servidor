@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -127,6 +128,15 @@ public class AdministradorSolicitudesBean implements AdministradorSolicitudes {
 			rslt.add(solvo);
 		}
 		return rslt;
+	}
+	
+	public Solicitud getSolicitud(int idSolicitud) {
+		try{
+		Solicitud sa = em.find(Solicitud.class, idSolicitud);
+		return sa;
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 }

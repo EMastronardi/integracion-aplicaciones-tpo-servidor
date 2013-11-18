@@ -72,7 +72,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	private AdministradorModulos am;
 
 	@EJB(beanName = "AdministrarSolicitudesBean")
-	private AdministrarSolicitudes as;
+	private AdministradorSolicitudes as;
 
 	public AdministrarDespachosBean() {
 		// TODO Auto-generated constructor stub
