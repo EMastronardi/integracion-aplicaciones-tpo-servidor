@@ -71,6 +71,9 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	@EJB(beanName = "AdministradorModulosBean")
 	private AdministradorModulos am;
 
+	@EJB(beanName = "AdministrarSolicitudesBean")
+	private AdministrarSolicitudes as;
+
 	public AdministrarDespachosBean() {
 		// TODO Auto-generated constructor stub
 	}
@@ -304,13 +307,17 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	}
 
 	private OrdenDespacho buscarODporSA(int idSolicitud) {
-		Query query = em
-				.createQuery("select od from OrdenDespacho od join od.solicitudes s where s.idSolicitud = ?");
-		query.setParameter(1, idSolicitud);
+		Solicitud sa = as.getSolicitud(idSolicitud);
+		if (sa == null)
+			return null;
 
-		OrdenDespacho od = (OrdenDespacho) query.getSingleResult();
-		// OrdenDespacho od = query.
-		return od;
+		Query query = em
+				.createQuery("select o from OrdenDespacho o join o.solicitudes s where s = :solicitud");
+
+		query.setParameter("solicitud", sa);
+
+		OrdenDespacho ordenDespacho = (OrdenDespacho) query.getSingleResult();
+		return ordenDespacho;
 	}
 
 	public RespuestaXML recibirArticulos(String jsonData) {
@@ -342,8 +349,16 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				od = buscarODporSA(idSolicitud);
 				if (od == null) {
 					respuesta.setEstado("ERROR");
-					respuesta.setMensaje("No existe orden de despacho asociada");
+					respuesta
+							.setMensaje("No existe orden de despacho asociada");
 					return respuesta;
+				} else {
+					if (od.getEstado().equals("Completa")) {
+						respuesta.setEstado("ERROR");
+						respuesta
+								.setMensaje("La orden de despacho esta en estatus Completa");
+						return respuesta;
+					}
 				}
 			} else {
 				respuesta.setEstado("ERROR");
@@ -351,39 +366,44 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				return respuesta;
 			}
 
-			while (index<items_sol.size()) {
+			while (index < items_sol.size()) {
 				JSONObject item = (JSONObject) items_sol.get(index);
 				// Se obtiene Código de Artículo y cantidad recibida
 				int codigo = item.getInt("codigo");
 				int cantidad = item.getInt("cantidad");
 
 				itemsJson.add(new ItemSAJson(codigo, cantidad));
-				index = index++;
+				index = index + 1;
 			}
 
 			if (!itemsJson.isEmpty()) {
-				ArrayList<Solicitud> solicitudes = (ArrayList<Solicitud>) od
-						.getSolicitudes();
 				/*
 				 * Recorre las solicitudes para determinar si la OD ha sido
 				 * cumplida
 				 */
-				for (Solicitud so : solicitudes) {
+				for (Solicitud so : od.getSolicitudes()) {
 					if (so.getIdSolicitud() == idSolicitud) {
-						ArrayList<ItemSolicitud> items = (ArrayList<ItemSolicitud>) so
-								.getItems();
-
 						// Recorre los items recibidos
 						for (ItemSAJson isaj : itemsJson)
 							// Recorre los items de la Solicitud de Artículos
-							for (ItemSolicitud is : items) {
+							for (ItemSolicitud is : so.getItems()) {
 								if (is.getArticulo().getNroArticulo() == isaj
 										.getCodigo()) {
 									int cantRec = is.getCantidadRecibida()
 											+ isaj.getCantidad();
-									// Setea cantidad recibida
+									// Setea cantidad recibida, siempre y cuando
+									// no haya más recibido que lo pedido
+									if (cantRec > is.getCantidad()) {
+										respuesta.setEstado("ERROR");
+										respuesta
+												.setMensaje("Se excede la cantidad pedida del articulo: "
+														+ is.getArticulo()
+																.getNombre());
+										return respuesta;
+									}
+
 									is.setCantidadRecibida(cantRec);
-									if (cantRec != is.getCantidad()) {
+									if (cantRec < is.getCantidad()) {
 										odReady = false;
 									}
 									break;
@@ -396,19 +416,25 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 						 * se sabe que algo está pendiente
 						 */
 						if (odReady)
-							for (ItemSolicitud is : items)
+							for (ItemSolicitud is : so.getItems())
 								if (is.getCantidadRecibida() != is
 										.getCantidad()) {
 									odReady = false;
 									break;
 								}
 					} else {
-						for (ItemSolicitud iso : so.getItems()) {
-							if (iso.getCantidad() != iso.getCantidadRecibida()) {
-								odReady = false;
-								break;
+						/*
+						 * Se recorren además las solicitudes que posee la OD,
+						 * si es que existen
+						 */
+						if (odReady)
+							for (ItemSolicitud is : so.getItems()) {
+								if (is.getCantidad() != is
+										.getCantidadRecibida()) {
+									odReady = false;
+									break;
+								}
 							}
-						}
 					}
 				}
 				/*
@@ -418,14 +444,14 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				if (odReady) {
 					od.setEstado("Completa");
 					em.merge(od);
-					
-					notificarEntregaExitosa(od);
+
+					// notificarEntregaExitosa(od);
 					respuesta.setEstado("OK");
 					respuesta.setMensaje("OD completa");
 				} else {
 					od.setEstado("Parcial");
 					em.merge(od);
-					
+
 					respuesta.setEstado("OK");
 					respuesta.setMensaje("OD parcialmente cumplida");
 				}
@@ -438,7 +464,6 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			e.printStackTrace();
 		}
 		return respuesta;
-
 	}
 
 	private void notificarEntregaExitosa(OrdenDespacho od) {
@@ -461,8 +486,9 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 		// Notificar Entrega a Portal Web
 		try {
-			RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(od.getNroVenta(), od.getModulo().getIp());
-			//Guardar en el log interno
+			RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(
+					od.getNroVenta(), od.getModulo().getIp());
+			// Guardar en el log interno
 			System.out.println(respuesta.getEstado());
 			System.out.println(respuesta.getMensaje());
 		} catch (Exception e) {
@@ -476,7 +502,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		// TODO Auto-generated method stub
 		Query q = em.createQuery("from OrdenDespacho");
 
-		ArrayList<OrdenDespacho>  vec = (ArrayList<OrdenDespacho>) q.getResultList();
+		ArrayList<OrdenDespacho> vec = (ArrayList<OrdenDespacho>) q
+				.getResultList();
 		ArrayList<OrdenDespachoVO> rslt = new ArrayList<OrdenDespachoVO>();
 		for (OrdenDespacho od : vec) {
 			OrdenDespachoVO vo = new OrdenDespachoVO();
@@ -484,7 +511,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			vo.setFecha(od.getFecha());
 			vo.setIdOrdenDespacho(od.getIdOrdenDespacho());
 			vo.setNroVenta(od.getNroVenta());
-			//Conversion Modulo > ModuloVO
+			// Conversion Modulo > ModuloVO
 			ModuloVO mvo = new ModuloVO();
 			mvo.setCodigo(od.getModulo().getCodigo());
 			mvo.setIdModulo(od.getModulo().getIdModulo());
@@ -492,12 +519,13 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			mvo.setJmsDestination(od.getModulo().getJmsDestination());
 			mvo.setNombre(od.getModulo().getNombre());
 			mvo.setPassword(od.getModulo().getPassword());
-			mvo.setRestDestinationLogisticaCambioEstado(od.getModulo().getRestDestinationLogisticaCambioEstado());
+			mvo.setRestDestinationLogisticaCambioEstado(od.getModulo()
+					.getRestDestinationLogisticaCambioEstado());
 			mvo.setTipo(od.getModulo().getTipo());
 			mvo.setUsuario(od.getModulo().getUsuario());
 			vo.setModulo(mvo);
-			ArrayList<SolicitudVO> vecsol= new ArrayList<SolicitudVO>();
-			///
+			ArrayList<SolicitudVO> vecsol = new ArrayList<SolicitudVO>();
+			// /
 			for (Solicitud sol : od.getSolicitudes()) {
 				SolicitudVO solvo = new SolicitudVO();
 				solvo.setIdSolicitud(sol.getIdSolicitud());
@@ -510,7 +538,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 					artvo.setNombre(itm.getArticulo().getNombre());
 					artvo.setNroArticulo(itm.getArticulo().getNroArticulo());
 					itmvo.setArticulo(artvo);
-					//No se MAPEA modulos para los articulos!!!
+					// No se MAPEA modulos para los articulos!!!
 					listitm.add(itmvo);
 				}
 				solvo.setItems(listitm);
@@ -523,16 +551,18 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	}
 
 	@Override
-	public ArrayList<OrdenDespachoVO> searchOrdenesDespacho(String filtro, int valor) {
+	public ArrayList<OrdenDespachoVO> searchOrdenesDespacho(String filtro,
+			int valor) {
 		// TODO Auto-generated method stub
-		Query q =  null;
-		if(filtro.equals("nrorden")){
+		Query q = null;
+		if (filtro.equals("nrorden")) {
 			q = em.createQuery("select od from OrdenDespacho od where od.id=:value");
-		}else{
+		} else {
 			q = em.createQuery("select od from OrdenDespacho od, Modulo m where m = od.modulo AND m.idModulo=:value");
 		}
 		q.setParameter("value", valor);
-		ArrayList<OrdenDespacho>  vec = (ArrayList<OrdenDespacho>) q.getResultList();
+		ArrayList<OrdenDespacho> vec = (ArrayList<OrdenDespacho>) q
+				.getResultList();
 		ArrayList<OrdenDespachoVO> rslt = new ArrayList<OrdenDespachoVO>();
 		for (OrdenDespacho od : vec) {
 			OrdenDespachoVO vo = new OrdenDespachoVO();
@@ -540,7 +570,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			vo.setFecha(od.getFecha());
 			vo.setIdOrdenDespacho(od.getIdOrdenDespacho());
 			vo.setNroVenta(od.getNroVenta());
-			//Conversion Modulo > ModuloVO
+			// Conversion Modulo > ModuloVO
 			ModuloVO mvo = new ModuloVO();
 			mvo.setCodigo(od.getModulo().getCodigo());
 			mvo.setIdModulo(od.getModulo().getIdModulo());
@@ -548,12 +578,13 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			mvo.setJmsDestination(od.getModulo().getJmsDestination());
 			mvo.setNombre(od.getModulo().getNombre());
 			mvo.setPassword(od.getModulo().getPassword());
-			mvo.setRestDestinationLogisticaCambioEstado(od.getModulo().getRestDestinationLogisticaCambioEstado());
+			mvo.setRestDestinationLogisticaCambioEstado(od.getModulo()
+					.getRestDestinationLogisticaCambioEstado());
 			mvo.setTipo(od.getModulo().getTipo());
 			mvo.setUsuario(od.getModulo().getUsuario());
 			vo.setModulo(mvo);
-			ArrayList<SolicitudVO> vecsol= new ArrayList<SolicitudVO>();
-			///
+			ArrayList<SolicitudVO> vecsol = new ArrayList<SolicitudVO>();
+			// /
 			for (Solicitud sol : od.getSolicitudes()) {
 				SolicitudVO solvo = new SolicitudVO();
 				solvo.setIdSolicitud(sol.getIdSolicitud());
@@ -566,7 +597,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 					artvo.setNombre(itm.getArticulo().getNombre());
 					artvo.setNroArticulo(itm.getArticulo().getNroArticulo());
 					itmvo.setArticulo(artvo);
-					//No se MAPEA modulos para los articulos!!!
+					// No se MAPEA modulos para los articulos!!!
 					listitm.add(itmvo);
 				}
 				solvo.setItems(listitm);
@@ -581,17 +612,18 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	@Override
 	public OrdenDespachoVO getOrdenDespacho(int nroOrdenDespacho) {
 		// TODO Auto-generated method stub
-		Query q = em.createQuery("select od from OrdenDespacho od where od.id=:value");
-		
+		Query q = em
+				.createQuery("select od from OrdenDespacho od where od.id=:value");
+
 		q.setParameter("value", nroOrdenDespacho);
-		OrdenDespacho  od = (OrdenDespacho) q.getSingleResult();
-		
+		OrdenDespacho od = (OrdenDespacho) q.getSingleResult();
+
 		OrdenDespachoVO vo = new OrdenDespachoVO();
 		vo.setEstado(od.getEstado());
 		vo.setFecha(od.getFecha());
 		vo.setIdOrdenDespacho(od.getIdOrdenDespacho());
 		vo.setNroVenta(od.getNroVenta());
-		//Conversion Modulo > ModuloVO
+		// Conversion Modulo > ModuloVO
 		ModuloVO mvo = new ModuloVO();
 		mvo.setCodigo(od.getModulo().getCodigo());
 		mvo.setIdModulo(od.getModulo().getIdModulo());
@@ -599,11 +631,12 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		mvo.setJmsDestination(od.getModulo().getJmsDestination());
 		mvo.setNombre(od.getModulo().getNombre());
 		mvo.setPassword(od.getModulo().getPassword());
-		mvo.setRestDestinationLogisticaCambioEstado(od.getModulo().getRestDestinationLogisticaCambioEstado());
+		mvo.setRestDestinationLogisticaCambioEstado(od.getModulo()
+				.getRestDestinationLogisticaCambioEstado());
 		mvo.setTipo(od.getModulo().getTipo());
 		mvo.setUsuario(od.getModulo().getUsuario());
 		vo.setModulo(mvo);
-		ArrayList<SolicitudVO> vecsol= new ArrayList<SolicitudVO>();
+		ArrayList<SolicitudVO> vecsol = new ArrayList<SolicitudVO>();
 		for (Solicitud sol : od.getSolicitudes()) {
 			SolicitudVO solvo = new SolicitudVO();
 			solvo.setIdSolicitud(sol.getIdSolicitud());
@@ -616,7 +649,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				artvo.setNombre(itm.getArticulo().getNombre());
 				artvo.setNroArticulo(itm.getArticulo().getNroArticulo());
 				itmvo.setArticulo(artvo);
-				//No se MAPEA modulos para los articulos!!!
+				// No se MAPEA modulos para los articulos!!!
 				listitm.add(itmvo);
 			}
 			solvo.setItems(listitm);
