@@ -155,9 +155,9 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		// a que deposito
 
 		String DEFAULT_CONNECTION_FACTORY = "jms/RemoteConnectionFactory";
-		String DEFAULT_DESTINATION = solicitud.getItems().get(0).getArticulo().getModulo().getJmsDestination();
-		String DEFAULT_USERNAME = solicitud.getItems().get(0).getArticulo().getModulo().getUsuario();
-		String DEFAULT_PASSWORD = solicitud.getItems().get(0).getArticulo().getModulo().getPassword();
+		String DEFAULT_DESTINATION = "jms/queue/solicitud";
+		String DEFAULT_USERNAME = "test1";
+		String DEFAULT_PASSWORD = "test12341";
 		String INITIAL_CONTEXT_FACTORY = "org.jboss.naming.remote.client.InitialContextFactory";
 		String PROVIDER_URL = "remote://"
 				+ solicitud.getItems().get(0).getArticulo().getModulo().getIp()
