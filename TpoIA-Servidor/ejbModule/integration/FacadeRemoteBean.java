@@ -26,7 +26,6 @@ import entities.Modulo;
  * Session Bean implementation class Facade
  */
 @Stateless
-@WebService
 public class FacadeRemoteBean implements FacadeRemote {
 	
 	@EJB
@@ -50,27 +49,22 @@ public class FacadeRemoteBean implements FacadeRemote {
 		// TODO Auto-generated constructor stub
 	}
 
-	@WebMethod(exclude=true)
 	public boolean validarUsuario(String username, String password) {
 		// validar el usuario que intenta loguear en el sistema
 		return adminUser.validarUsuario(username, password);
 	}
 
-	
-	@WebMethod(exclude=true)
 	public boolean createUser(String username, String password) {
 		// TODO Auto-generated method stub
 		return adminUser.agregarUsuario(username, password);
 	}
 
-	@WebMethod(exclude=true)
 	public boolean validarUsuarioLogueado(String usuario) {
 
 		return false;
 	}
 
 	@Override
-	@WebMethod(exclude=true)
 	public Modulo getModulo(int idModulo) {
 		// TODO Auto-generated method stub
 		return this.adminMod.getModulo(idModulo);
@@ -78,14 +72,12 @@ public class FacadeRemoteBean implements FacadeRemote {
 
 	
 	@Override
-	@WebMethod(exclude=true)
 	public boolean addArticulo(Articulo articulo) {
 		// TODO Auto-generated method stub
 		return this.addArticulo(articulo);
 	}
 
 	@Override
-	@WebMethod(exclude=true)
 	public boolean createModulo(String tipo, int idModulo, String ip, String nombre,
 			String codigo, String usuario, String password,
 			String jmsDestination, String restDestinationLogisticaCambioEstado) {
@@ -94,7 +86,6 @@ public class FacadeRemoteBean implements FacadeRemote {
 	}
 
 	@Override
-	@WebMethod(exclude=true)
 	public boolean deleteModulo(int idModulo) {
 		// TODO Auto-generated method stub
 		return adminMod.deleteModulo(idModulo);
