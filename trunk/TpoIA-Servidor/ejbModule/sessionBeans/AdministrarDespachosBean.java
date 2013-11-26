@@ -22,9 +22,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.jboss.logging.Logger;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+import utils.Constantes;
 import utils.ItemSAJson;
 import valueObjects.ArticuloVO;
 import valueObjects.ItemSolicitudVO;
@@ -64,86 +67,100 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	@EJB
 	private AdministradorSolicitudes as;
 
+	Logger logger = Logger.getLogger(AdministrarDespachosBean.class);
+
 	public AdministrarDespachosBean() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String procesarSolicitudDespacho(String valorXml) {
-		// Aca hay que procesar el xml y hacer lo que haya que hacer.
-		String resultado = "";
-		XStream xstream = new XStream();
-		xstream.alias("despacho", OrdenDespachoXML.class);
-		xstream.alias("item", ItemXML.class);
-		String[] formats = { "yyyy-MM-dd HH:mm" };
-		xstream.registerConverter(new DateConverter("yyyy-MM-dd HH:mm", formats));
 
-		OrdenDespachoXML odXml = (OrdenDespachoXML) xstream.fromXML(valorXml);
-		OrdenDespacho od = new OrdenDespacho();
-		od.setIdOrdenDespacho(odXml.getNroDespacho());
-		od.setNroVenta(odXml.getNroVenta());
-		od.setFecha(odXml.getFecha());
-		od.setEstado("Pendiente");
+		logger.info("Ingreso a procesarSolicitudDesapacho");
+		try {
+			// Aca hay que procesar el xml y hacer lo que haya que hacer.
+			String resultado = "";
+			XStream xstream = new XStream();
+			xstream.alias("despacho", OrdenDespachoXML.class);
+			xstream.alias("item", ItemXML.class);
+			String[] formats = { "yyyy-MM-dd HH:mm" };
+			xstream.registerConverter(new DateConverter("yyyy-MM-dd HH:mm",
+					formats));
 
-		Modulo m = (Modulo) em.find(Modulo.class, odXml.getIdModulo());
-		if (m != null) {
-			od.setModulo(m);
+			OrdenDespachoXML odXml = (OrdenDespachoXML) xstream
+					.fromXML(valorXml);
+			OrdenDespacho od = new OrdenDespacho();
+			od.setIdOrdenDespacho(odXml.getNroDespacho());
+			od.setNroVenta(odXml.getNroVenta());
+			od.setFecha(odXml.getFecha());
+			od.setEstado("Pendiente");
 
-			// Armar Solicitudes y ItemsOrdenDespacho
-			List<ItemXML> itmsXml = odXml.getItems();
+			Modulo m = (Modulo) em.find(Modulo.class, odXml.getIdModulo());
+			if (m != null) {
+				od.setModulo(m);
 
-			// la hash table tienen <idDeposito, Solicitud>
-			Map<Modulo, List<ItemSolicitud>> tabla = new HashMap<Modulo, List<ItemSolicitud>>();
+				// Armar Solicitudes y ItemsOrdenDespacho
+				List<ItemXML> itmsXml = odXml.getItems();
 
-			for (ItemXML itm : itmsXml) {
+				// la hash table tienen <idDeposito, Solicitud>
+				Map<Modulo, List<ItemSolicitud>> tabla = new HashMap<Modulo, List<ItemSolicitud>>();
 
-				Articulo art = (Articulo) em.find(Articulo.class,
-						Integer.parseInt(itm.getCodigo()));
-				if (art != null) {// TODO: que hacer cuando es null???
-					// Ya esta el deposito de ese articulo en la tabla??? //
+				for (ItemXML itm : itmsXml) {
 
-					if (!tabla.containsKey(art.getModulo())) {
-						// Creo una nueva Lista de solicitudes y la agrego a la
-						// tabla
-						tabla.put(art.getModulo(),
-								new ArrayList<ItemSolicitud>());
+					Articulo art = (Articulo) em.find(Articulo.class,
+							Integer.parseInt(itm.getCodigo()));
+					if (art != null) {// TODO: que hacer cuando es null???
+						// Ya esta el deposito de ese articulo en la tabla??? //
+
+						if (!tabla.containsKey(art.getModulo())) {
+							// Creo una nueva Lista de solicitudes y la agrego a
+							// la
+							// tabla
+							tabla.put(art.getModulo(),
+									new ArrayList<ItemSolicitud>());
+						}
+
+						tabla.get(art.getModulo()).add(
+								new ItemSolicitud(itm, art));
+
+					} else {
+						System.out.println("El articulo nro: "
+								+ itm.getCodigo() + " no existe.");
+					}
+				}
+
+				if (!tabla.isEmpty()) {
+
+					for (Modulo modulo : tabla.keySet()) {
+						Solicitud solicitud = new Solicitud();
+						solicitud.agregarItemsSolicitudArticulo(tabla
+								.get(modulo));
+
+						od.agregarSolicitudArticulo(solicitud);
 					}
 
-					tabla.get(art.getModulo()).add(new ItemSolicitud(itm, art));
+					em.merge(od);
+
+					// Envio a cada deposito la solicitud correspondiente
+					for (Solicitud s : od.getSolicitudes()) {
+						solicitarADeposito(s);
+					}
+					resultado = "OK";
 
 				} else {
-					System.out.println("El articulo nro: " + itm.getCodigo()
-							+ " no existe.");
+					resultado = "No se genera la OrdenDespacho, ningun Articulo existente";
+					System.out
+							.println("No se genera la OrdenDespacho, ningun Articulo existente");
 				}
-			}
-
-			if (!tabla.isEmpty()) {
-
-				for (Modulo modulo : tabla.keySet()) {
-					Solicitud solicitud = new Solicitud();
-					solicitud.agregarItemsSolicitudArticulo(tabla.get(modulo));
-
-					od.agregarSolicitudArticulo(solicitud);
-				}
-
-				em.merge(od);
-
-				// Envio a cada deposito la solicitud correspondiente
-				for (Solicitud s : od.getSolicitudes()) {
-					solicitarADeposito(s);
-				}
-				resultado = "OK";
-
 			} else {
-				resultado = "No se genera la OrdenDespacho, ningun Articulo existente";
-				System.out
-						.println("No se genera la OrdenDespacho, ningun Articulo existente");
+				resultado = "Error no encuentra el modulo correcto";
+				System.out.println(resultado);
 			}
-		} else {
-			resultado = "Error no encuentra el modulo correcto";
-			System.out.println(resultado);
-		}
 
-		return resultado;
+			return resultado;
+		} catch (NumberFormatException e) {
+			logger.error("Error general en procesarSolicitudDespacho");
+			e.printStackTrace();
+			return null;
+		}
 
 	}
 
@@ -153,11 +170,11 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	private void solicitarADeposito(Solicitud solicitud) {
 
 		// a que deposito
-
+		logger.info("Enviando solicitud a deposito");
 		String DEFAULT_CONNECTION_FACTORY = "jms/RemoteConnectionFactory";
-		String DEFAULT_DESTINATION = "jms/queue/solicitud";
-		String DEFAULT_USERNAME = "test1";
-		String DEFAULT_PASSWORD = "test12341";
+		String DEFAULT_DESTINATION = Constantes.getJmsEnviarADepDest();
+		String DEFAULT_USERNAME = Constantes.getJmsEnviarADepUser();
+		String DEFAULT_PASSWORD = Constantes.getJmsEnviarADepPass();
 		String INITIAL_CONTEXT_FACTORY = "org.jboss.naming.remote.client.InitialContextFactory";
 		String PROVIDER_URL = "remote://"
 				+ solicitud.getItems().get(0).getArticulo().getModulo().getIp()
@@ -218,10 +235,10 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			producer.send(message);
 			connection.close();
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
+			logger.error("Error al enviar a deposito, JMSException");
 			e.printStackTrace();
 		} catch (NamingException e) {
-			// TODO Auto-generated catch block
+			logger.error("Error al enviar a deposito, NamingException");
 			e.printStackTrace();
 		}
 	}
@@ -390,8 +407,11 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		// Notificar Entrega a Log&Monit
 		notificarEntregaDespacho ned = new notificarEntregaDespacho();
 		try {
-			String jsonData = ned.notificarEntregaDespachoLogistica(od
-					.getIdOrdenDespacho(),am.getModulo("logistica").getIp()+"8080"+am.getModulo("logistica").getRestDestinationLogisticaCambioEstado());
+			String jsonData = ned.notificarEntregaDespachoLogistica(
+					od.getIdOrdenDespacho(), am.getModulo("logistica").getIp()
+							+ "8080"
+							+ am.getModulo("logistica")
+									.getRestDestinationLogisticaCambioEstado());
 			JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonData);
 			String estado = json.getString("estado");
 			String mensaje = json.getString("mensaje");
@@ -405,7 +425,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 		// Notificar Entrega a Portal Web
 		try {
-			RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(od.getNroVenta(), od.getModulo().getIp());
+			RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(
+					od.getNroVenta(), od.getModulo().getIp());
 			// Guardar en el log interno
 			System.out.println(respuesta.getEstado());
 			System.out.println(respuesta.getMensaje());

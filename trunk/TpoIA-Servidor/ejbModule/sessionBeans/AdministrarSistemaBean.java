@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.jboss.logging.Logger;
+
 import entities.SistemaConfiguracion;
 
 /**
@@ -15,28 +17,23 @@ import entities.SistemaConfiguracion;
 @LocalBean
 public class AdministrarSistemaBean implements AdministrarSistema {
 
-    /**
-     * Default constructor. 
-     */
 	@PersistenceContext
 	EntityManager em;
-    public AdministrarSistemaBean() {
-        // TODO Auto-generated constructor stub
-    }
+	Logger logger = Logger.getLogger(AdministrarSistemaBean.class);
+
+	public AdministrarSistemaBean() {
+	}
 
 	@Override
 	public String getModuloId() {
+		logger.info("Ingresando a GetmoduloID");
 		Query q = em.createQuery("Select top 1 * from SistemaConfiguracion");
-		SistemaConfiguracion sist =   (SistemaConfiguracion)q.getSingleResult();
-		if(sist != null)
+		SistemaConfiguracion sist = (SistemaConfiguracion) q.getSingleResult();
+		if (sist != null)
 			return String.valueOf(sist.getModuloId());
 		else
-			return "id no encontrado";
-	}
-
-	public String getModuloIp() {
-		// TODO Auto-generated method stub
-		return "";
+			logger.warn("getModuloId - Id no encontrado");
+		return "id no encontrado";
 	}
 
 }
