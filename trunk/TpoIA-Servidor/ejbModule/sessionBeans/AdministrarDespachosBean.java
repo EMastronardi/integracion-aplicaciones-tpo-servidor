@@ -410,8 +410,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			String jsonData = ned.notificarEntregaDespachoLogistica(
 					od.getIdOrdenDespacho(), am.getModulo("logistica").getIp()
 							+ "8080"
-							+ am.getModulo("logistica")
-									.getRestDestinationLogisticaCambioEstado());
+							+ Constantes.getRestEnviarNotiLog());
 			JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonData);
 			String estado = json.getString("estado");
 			String mensaje = json.getString("mensaje");
@@ -455,13 +454,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			mvo.setCodigo(od.getModulo().getCodigo());
 			mvo.setIdModulo(od.getModulo().getIdModulo());
 			mvo.setIp(od.getModulo().getIp());
-			mvo.setJmsDestination(od.getModulo().getJmsDestination());
 			mvo.setNombre(od.getModulo().getNombre());
-			mvo.setPassword(od.getModulo().getPassword());
-			mvo.setRestDestinationLogisticaCambioEstado(od.getModulo()
-					.getRestDestinationLogisticaCambioEstado());
 			mvo.setTipo(od.getModulo().getTipo());
-			mvo.setUsuario(od.getModulo().getUsuario());
 			vo.setModulo(mvo);
 			ArrayList<SolicitudVO> vecsol = new ArrayList<SolicitudVO>();
 			// /
@@ -514,13 +508,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			mvo.setCodigo(od.getModulo().getCodigo());
 			mvo.setIdModulo(od.getModulo().getIdModulo());
 			mvo.setIp(od.getModulo().getIp());
-			mvo.setJmsDestination(od.getModulo().getJmsDestination());
 			mvo.setNombre(od.getModulo().getNombre());
-			mvo.setPassword(od.getModulo().getPassword());
-			mvo.setRestDestinationLogisticaCambioEstado(od.getModulo()
-					.getRestDestinationLogisticaCambioEstado());
 			mvo.setTipo(od.getModulo().getTipo());
-			mvo.setUsuario(od.getModulo().getUsuario());
 			vo.setModulo(mvo);
 			ArrayList<SolicitudVO> vecsol = new ArrayList<SolicitudVO>();
 			// /
@@ -567,13 +556,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		mvo.setCodigo(od.getModulo().getCodigo());
 		mvo.setIdModulo(od.getModulo().getIdModulo());
 		mvo.setIp(od.getModulo().getIp());
-		mvo.setJmsDestination(od.getModulo().getJmsDestination());
 		mvo.setNombre(od.getModulo().getNombre());
-		mvo.setPassword(od.getModulo().getPassword());
-		mvo.setRestDestinationLogisticaCambioEstado(od.getModulo()
-				.getRestDestinationLogisticaCambioEstado());
-		mvo.setTipo(od.getModulo().getTipo());
-		mvo.setUsuario(od.getModulo().getUsuario());
 		vo.setModulo(mvo);
 		ArrayList<SolicitudVO> vecsol = new ArrayList<SolicitudVO>();
 		for (Solicitud sol : od.getSolicitudes()) {

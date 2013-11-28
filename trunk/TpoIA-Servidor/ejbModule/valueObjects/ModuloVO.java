@@ -8,10 +8,6 @@ public class ModuloVO implements Serializable{
 	private String nombre;
 	private String tipo;
 	private String codigo;
-	private String usuario;
-	private String password;
-	private String jmsDestination;
-	private String restDestinationLogisticaCambioEstado;
 	
 	public ModuloVO(){}
 
@@ -47,30 +43,6 @@ public class ModuloVO implements Serializable{
 		this.codigo = codigo;
 	}
 
-	public String getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getJmsDestination() {
-		return jmsDestination;
-	}
-
-	public void setJmsDestination(String jmsDestination) {
-		this.jmsDestination = jmsDestination;
-	}
-
 	public String getTipo() {
 		return tipo;
 	}
@@ -79,14 +51,4 @@ public class ModuloVO implements Serializable{
 		this.tipo = tipo;
 	}
 
-	public String getRestDestinationLogisticaCambioEstado() {
-		return restDestinationLogisticaCambioEstado;
-	}
-
-	public void setRestDestinationLogisticaCambioEstado(
-			String restDestinationLogisticaCambioEstado) {
-		this.restDestinationLogisticaCambioEstado = restDestinationLogisticaCambioEstado;
-	}
-	
-	
 }
