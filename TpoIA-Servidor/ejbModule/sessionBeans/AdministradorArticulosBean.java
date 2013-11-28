@@ -61,11 +61,8 @@ public class AdministradorArticulosBean implements AdministradorArticulos {
 				mod.setCodigo(articulo.getModulo().getCodigo());
 				mod.setIdModulo(articulo.getModulo().getIdModulo());
 				mod.setIp(articulo.getModulo().getIp());
-				mod.setJmsDestination(articulo.getModulo().getJmsDestination());
 				mod.setNombre(articulo.getModulo().getNombre());
-				mod.setPassword(articulo.getModulo().getPassword());
 				mod.setTipo(articulo.getModulo().getTipo());
-				mod.setUsuario(articulo.getModulo().getUsuario());
 				artVO.setDeposito(mod);
 				artVO.setNombre(articulo.getNombre());
 				artVO.setNroArticulo(articulo.getNroArticulo());
@@ -99,11 +96,8 @@ public class AdministradorArticulosBean implements AdministradorArticulos {
 				mod.setCodigo(articulo.getModulo().getCodigo());
 				mod.setIdModulo(articulo.getModulo().getIdModulo());
 				mod.setIp(articulo.getModulo().getIp());
-				mod.setJmsDestination(articulo.getModulo().getJmsDestination());
 				mod.setNombre(articulo.getModulo().getNombre());
-				mod.setPassword(articulo.getModulo().getPassword());
 				mod.setTipo(articulo.getModulo().getTipo());
-				mod.setUsuario(articulo.getModulo().getUsuario());
 				artVO.setDeposito(mod);
 				artVO.setNombre(articulo.getNombre());
 				artVO.setNroArticulo(articulo.getNroArticulo());

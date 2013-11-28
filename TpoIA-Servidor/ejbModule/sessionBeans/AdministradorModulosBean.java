@@ -56,8 +56,7 @@ public class AdministradorModulosBean implements AdministradorModulos {
 	}
 
 	public boolean createModulo(String tipo, int idModulo, String ip,
-			String nombre, String codigo, String usuario, String password,
-			String jmsDestination, String restDestinationLogisticaCambioEstado) {
+			String nombre, String codigo) {
 
 		try {
 			logger.info("Creando modulo nuevo");
@@ -67,10 +66,6 @@ public class AdministradorModulosBean implements AdministradorModulos {
 			mod.setIp(ip);
 			mod.setNombre(nombre);
 			mod.setCodigo(codigo);
-			mod.setJmsDestination(jmsDestination);
-			mod.setRestDestinationLogisticaCambioEstado(restDestinationLogisticaCambioEstado);
-			mod.setPassword(password);
-			mod.setUsuario(usuario);
 			em.persist(mod);
 			return true;
 		} catch (Exception e) {
@@ -94,19 +89,15 @@ public class AdministradorModulosBean implements AdministradorModulos {
 	}
 
 	public boolean updateModulo(String tipo, int idModulo, String ip,
-			String nombre, String codigo, String usuario, String password,
-			String jmsDestination, String restDestinationLogisticaCambioEstado) {
+			String nombre, String codigo) {
 		try {
 			logger.info("Actualizando Modulo");
 			Modulo mod = (Modulo) em.find(Modulo.class, idModulo);
 			mod.setCodigo(codigo);
 			mod.setIdModulo(idModulo);
 			mod.setIp(ip);
-			mod.setJmsDestination(jmsDestination);
 			mod.setNombre(nombre);
-			mod.setUsuario(usuario);
 			mod.setTipo(tipo);
-			mod.setPassword(password);
 
 			em.persist(mod);
 			return true;
@@ -129,14 +120,9 @@ public class AdministradorModulosBean implements AdministradorModulos {
 				ModuloVO mod = new ModuloVO();
 				mod.setCodigo(modulo.getCodigo());
 				mod.setIdModulo(modulo.getIdModulo());
-				mod.setIp(modulo.getIp());
-				mod.setJmsDestination(modulo.getJmsDestination());
-				mod.setPassword(modulo.getPassword());
-				mod.setUsuario(modulo.getUsuario());
+				mod.setIp(modulo.getIp());				
 				mod.setNombre(modulo.getNombre());
 				mod.setTipo(modulo.getTipo());
-				mod.setRestDestinationLogisticaCambioEstado(modulo
-						.getRestDestinationLogisticaCambioEstado());
 				rslt.add(mod);
 			}
 			return rslt;

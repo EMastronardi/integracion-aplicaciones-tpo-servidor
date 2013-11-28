@@ -51,6 +51,7 @@ public class ArtNuevoMsg implements MessageListener {
     	try {
 			str = textmessage.getText();
 			XStream xstream = new XStream(); 
+			xstream.ignoreUnknownElements();
 			xstream.alias("articulo", ArticuloXML.class);
 			ArticuloXML artXml = (ArticuloXML)xstream.fromXML(str);
 			fachada.addArticulo(artXml.getCodigo(),artXml.getNombre(), artXml.getIdModulo());
