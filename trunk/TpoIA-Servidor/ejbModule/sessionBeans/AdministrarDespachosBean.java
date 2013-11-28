@@ -81,10 +81,9 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			XStream xstream = new XStream();
 			xstream.alias("despacho", OrdenDespachoXML.class);
 			xstream.alias("item", ItemXML.class);
-			String[] formats = { "yyyy-MM-dd HH:mm" };
 			xstream.registerConverter(new DateConverter("yyyy-MM-dd HH:mm",
-					formats));
-
+				 	 new String[] { "yyyy-MM-dd HH:mm:ss" }));
+			xstream.ignoreUnknownElements();
 			OrdenDespachoXML odXml = (OrdenDespachoXML) xstream
 					.fromXML(valorXml);
 			OrdenDespacho od = new OrdenDespacho();
@@ -224,7 +223,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 			XStream xstream = new XStream();
 			SolicitudXML solXml = new SolicitudXML(solicitud);
-
+			xstream.ignoreUnknownElements();
 			xstream.alias("SolicitudArticulos", SolicitudXML.class);
 			xstream.alias("articulos", ItemXML.class);
 
