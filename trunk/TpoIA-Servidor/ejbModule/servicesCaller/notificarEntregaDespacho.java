@@ -1,8 +1,6 @@
 package servicesCaller;
 
-import java.io.UnsupportedEncodingException;
 
-import javax.ejb.EJB;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -14,7 +12,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.thoughtworks.xstream.XStream;
 
-import sessionBeans.AdministradorModulos;
+import utils.Constantes;
 import xml.RespuestaXML;
 
 
@@ -42,7 +40,7 @@ public class notificarEntregaDespacho {
 	
 	public RespuestaXML notificarEntregaDespachoPortal(int nroVenta, String direccionIP)throws Exception {
 		try {			
-			String direccion = "http://" + direccionIP + ":8080/portalEstadoEntrega/ServidorEstadoEntregaBean";
+			String direccion = "http://" + direccionIP + Constantes.getWsEnviarNotiPortalWeb();
 			ServidorEstadoEntregaBean service = new ServidorEstadoEntregaBeanServiceLocator()
 					.getServidorEstadoEntregaBeanPort(direccion);
 			

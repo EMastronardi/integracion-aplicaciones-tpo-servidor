@@ -7,7 +7,8 @@ public class Constantes {
 	final static String jmsEnviarADepDest = "jms/queue/solicitud";
 	final static String jmsEnviarADepUser = "test1";
 	final static String jmsEnviarADepPass = "test12341";
-	final static String restEnviarNotiLog = "/LogisticaMonitoreoWEB/rest/LogisticaMonitoreo/notificarEntregaDespacho";
+	final static String restEnviarNotiLog = ":8080/LogisticaMonitoreoWEB/rest/LogisticaMonitoreo/notificarEntregaDespacho";
+	final static String wsEnviarNotiPortalWeb = ":8080/portalEstadoEntrega/ServidorEstadoEntregaBean";
 	
 	public static int getId() {
 		return id;
@@ -30,5 +31,7 @@ public class Constantes {
 	public static String getRestEnviarNotiLog(){
 		return restEnviarNotiLog;
 	}
-
+	public static String getWsEnviarNotiPortalWeb(){
+		return wsEnviarNotiPortalWeb;
+	}
 }
