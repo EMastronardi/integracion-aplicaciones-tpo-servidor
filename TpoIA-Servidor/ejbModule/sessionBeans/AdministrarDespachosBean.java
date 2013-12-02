@@ -272,6 +272,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			if (idModulo == 0) {
 				respuesta.setEstado("ERROR");
 				respuesta.setMensaje("El modulo no existe");
+				logger.error("Error en recibirArticulos: El modulo no existe");
 				return respuesta;
 			}
 
@@ -287,18 +288,21 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 					respuesta.setEstado("ERROR");
 					respuesta
 							.setMensaje("No existe orden de despacho asociada");
+					logger.error("Error en recibirArticulos: No existe orden de despacho asociada");
 					return respuesta;
 				} else {
 					if (od.getEstado().equals("Completa")) {
 						respuesta.setEstado("ERROR");
 						respuesta
 								.setMensaje("La orden de despacho esta en estatus Completa");
+						logger.error("Error en recibirArticulos: La orden de despacho esta en estatus Completa");
 						return respuesta;
 					}
 				}
 			} else {
 				respuesta.setEstado("ERROR");
 				respuesta.setMensaje("La solicitud de articulos no existe");
+				logger.error("Error en recibirArticulos: La solicitud de articulos no existe");
 				return respuesta;
 			}
 
@@ -335,6 +339,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 												.setMensaje("Se excede la cantidad pedida del articulo: "
 														+ is.getArticulo()
 																.getNombre());
+										logger.error("Error en recibirArticulos: Se excede la cantidad pedida del articulo");
 										return respuesta;
 									}
 
@@ -380,23 +385,25 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				if (odReady) {
 					od.setEstado("Completa");
 					em.merge(od);
-
-					// notificarEntregaExitosa(od);
+					logger.info("recibirArticulos: OD completa se informa estado");
 					respuesta.setEstado("OK");
 					respuesta.setMensaje("OD completa");
+					notificarEntregaExitosa(od);
 				} else {
 					od.setEstado("Parcial");
 					em.merge(od);
-
+					logger.info("recibirArticulos: OD parcialmente cumplida");
 					respuesta.setEstado("OK");
 					respuesta.setMensaje("OD parcialmente cumplida");
 				}
 			} else {
 				respuesta.setEstado("ERROR");
 				respuesta.setMensaje("No existen Items a Recibir");
+				logger.error("Error en recibirArticulos: No existen Items a Recibir");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			logger.error("Error al recibir articulos de OD desde Despacho");
 			e.printStackTrace();
 		}
 		return respuesta;
@@ -407,17 +414,16 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		notificarEntregaDespacho ned = new notificarEntregaDespacho();
 		try {
 			String jsonData = ned.notificarEntregaDespachoLogistica(
-					od.getIdOrdenDespacho(), am.getModulo("logistica").getIp()
-							+ "8080"
-							+ Constantes.getRestEnviarNotiLog());
+					od.getIdOrdenDespacho(), am.getModulo("logistica").getIp()+ Constantes.getRestEnviarNotiLog());
 			JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonData);
 			String estado = json.getString("estado");
 			String mensaje = json.getString("mensaje");
 			// Guardar en el log interno
-			System.out.println(String.valueOf(estado));
-			System.out.println(String.valueOf(mensaje));
+			logger.info("Notificar cambio de estado de OD a Logistica: " + String.valueOf(estado));
+			logger.info("Notificar cambio de estado de OD a Logistica: " + String.valueOf(mensaje));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			logger.error("Error al notificar cambio de estado de OD a Logistica");
 			e.printStackTrace();
 		}
 
@@ -426,10 +432,11 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(
 					od.getNroVenta(), od.getModulo().getIp());
 			// Guardar en el log interno
-			System.out.println(respuesta.getEstado());
-			System.out.println(respuesta.getMensaje());
+			logger.info("Notificar cambio de estado de OD a PortalWeb: " + respuesta.getEstado());
+			logger.info("Notificar cambio de estado de OD a PortalWeb: " + respuesta.getMensaje());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			logger.error("Error al notificar cambio de estado de OD a PortalWeb");
 			e.printStackTrace();
 		}
 	}
