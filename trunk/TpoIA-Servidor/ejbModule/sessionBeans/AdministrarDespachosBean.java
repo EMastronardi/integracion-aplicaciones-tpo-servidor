@@ -34,6 +34,7 @@ import valueObjects.ItemSolicitudVO;
 import valueObjects.ModuloVO;
 import valueObjects.OrdenDespachoVO;
 import valueObjects.SolicitudVO;
+import xml.ItemSolicitudXML;
 import xml.ItemXML;
 import xml.OrdenDespachoXML;
 import xml.RespuestaXML;
@@ -136,21 +137,25 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 						od.agregarSolicitudArticulo(solicitud);
 					}
 
-					em.merge(od);
+					em.persist(od);
+					
+//					od = em.find(OrdenDespacho.class, od.getIdOrdenDespacho());
 
 					// Envio a cada deposito la solicitud correspondiente
 					for (Solicitud s : od.getSolicitudes()) {
+						System.out.println(s.getIdSolicitud());
 						solicitarADeposito(s);
 					}
-					resultado = "OK";
+					resultado = "<resultado> <estado>OK</estado> <mensaje>Se proceso correctamente la solicitud</mensaje> </resultado>";
 
 				} else {
-					resultado = "No se genera la OrdenDespacho, ningun Articulo existente";
+					resultado = "<resultado> <estado>ERROR</estado> <mensaje>No se genera la OrdenDespacho, ningun Articulo existente</mensaje> </resultado>";
 					System.out
 							.println("No se genera la OrdenDespacho, ningun Articulo existente");
 				}
 			} else {
-				resultado = "Error no encuentra el modulo correcto";
+				resultado = 
+				"<resultado> <estado>ERROR</estado> <mensaje>Error no encuentra el modulo correcto</mensaje> </resultado>";
 				System.out.println(resultado);
 			}
 
@@ -158,7 +163,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		} catch (NumberFormatException e) {
 			logger.error("Error general en procesarSolicitudDespacho");
 			e.printStackTrace();
-			return null;
+			return "<resultado> <estado>ERROR</estado> <mensaje>Se proceso incorrectamente la solicitud</mensaje> </resultado>";
 		}
 
 	}
@@ -224,8 +229,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			XStream xstream = new XStream();
 			SolicitudXML solXml = new SolicitudXML(solicitud);
 			xstream.ignoreUnknownElements();
-			xstream.alias("SolicitudArticulos", SolicitudXML.class);
-			xstream.alias("articulos", ItemXML.class);
+			xstream.alias("solicitudArticulos", SolicitudXML.class);
+			xstream.alias("articulo", ItemSolicitudXML.class);
 
 			String xml = xstream.toXML(solXml);
 
