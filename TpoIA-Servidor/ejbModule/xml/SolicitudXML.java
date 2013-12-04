@@ -21,14 +21,14 @@ public class SolicitudXML {
 
 	private String idSolicitud;
 	private String idModulo;
-	private List<ItemXML> articulos;
+	private List<ItemSolicitudXML> articulos;
 	public SolicitudXML(Solicitud solicitud) {
 		
 		this.idSolicitud = String.valueOf(solicitud.getIdSolicitud());
-		this.idModulo = String.valueOf(solicitud.getItems().get(0).getArticulo().getModulo().getIdModulo());
-		this.articulos = new ArrayList<ItemXML>();
+		this.idModulo = "12";
+		this.articulos = new ArrayList<ItemSolicitudXML>();
 		for (ItemSolicitud itmSol : solicitud.getItems()) {
-			ItemXML itmXml = new ItemXML(itmSol.getArticulo().getNroArticulo(), itmSol.getCantidad());
+			ItemSolicitudXML itmXml = new ItemSolicitudXML(itmSol.getArticulo().getNroArticulo(), itmSol.getCantidad());
 			articulos.add(itmXml);
 		}
 		
@@ -45,17 +45,17 @@ public class SolicitudXML {
 	public void setIdModulo(String idModulo) {
 		this.idModulo = idModulo;
 	}
-	public List<ItemXML> getArticulos() {
+	public List<ItemSolicitudXML> getArticulos() {
 		return articulos;
 	}
-	public void setArticulos(List<ItemXML> articulos) {
+	public void setArticulos(List<ItemSolicitudXML> articulos) {
 		this.articulos = articulos;
 	}
 	public void addArticulo(int nroArticulo, int cantidad) {
 		if(articulos == null){
-			articulos = new ArrayList<ItemXML>();
+			articulos = new ArrayList<ItemSolicitudXML>();
 		}
-		articulos.add(new ItemXML(nroArticulo, cantidad));
+		articulos.add(new ItemSolicitudXML(nroArticulo, cantidad));
 	}
 	
 }
