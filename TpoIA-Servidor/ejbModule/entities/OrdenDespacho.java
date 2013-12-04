@@ -26,11 +26,10 @@ public class OrdenDespacho implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	@Column(name="idVenta")
 	private int nroVenta;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name="idModulo")
 	private Modulo modulo;
 	private Date fecha;
@@ -42,6 +41,8 @@ public class OrdenDespacho implements Serializable {
 	
 	
 	public OrdenDespacho() {
+		//Esto lo agrego EmmaT para solucionar el problema de id=0 cuando utilizabamos la OD dentro del mismo metodo que la generamos.
+		id = -1;
 		solicitudes = new ArrayList<Solicitud>();
 	}
 
