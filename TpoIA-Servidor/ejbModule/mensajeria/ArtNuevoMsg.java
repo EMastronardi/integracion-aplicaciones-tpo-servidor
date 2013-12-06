@@ -11,6 +11,9 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
+import org.jboss.logging.Logger;
+
+import sessionBeans.AdministradorArticulosBean;
 import sessionBeans.AdministradorModulos;
 import xml.ArticuloXML;
 
@@ -47,16 +50,20 @@ public class ArtNuevoMsg implements MessageListener {
         // TODO Auto-generated method stub
     	TextMessage textmessage = (TextMessage) message;
     	String str;
+    	Logger logger = Logger.getLogger(ArtNuevoMsg.class);
+
     	
     	try {
 			str = textmessage.getText();
+			logger.info("Reciviendo nuevo Articulo.");
+			logger.info("XML: "+str);
 			XStream xstream = new XStream();
 			xstream.ignoreUnknownElements();
 			xstream.alias("articulo", ArticuloXML.class);
 			ArticuloXML artXml = (ArticuloXML)xstream.fromXML(str);
 			fachada.addArticulo(artXml.getCodigo(),artXml.getNombre(), artXml.getIdModulo());
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
+			logger.error("Error en nuevo articulo.");
 			e.printStackTrace();
 		}
     	
