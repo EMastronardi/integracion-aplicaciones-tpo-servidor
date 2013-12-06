@@ -76,6 +76,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	public String procesarSolicitudDespacho(String valorXml) {
 
 		logger.info("Ingreso a procesarSolicitudDesapacho");
+		logger.info("Llega el XML: " + valorXml);
+
 		try {
 			// Aca hay que procesar el xml y hacer lo que haya que hacer.
 			String resultado = "";
@@ -83,7 +85,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			xstream.alias("despacho", OrdenDespachoXML.class);
 			xstream.alias("item", ItemXML.class);
 			xstream.registerConverter(new DateConverter("yyyy-MM-dd HH:mm",
-				 	 new String[] { "yyyy-MM-dd HH:mm:ss" }));
+					new String[] { "yyyy-MM-dd HH:mm:ss" }));
 			xstream.ignoreUnknownElements();
 			OrdenDespachoXML odXml = (OrdenDespachoXML) xstream
 					.fromXML(valorXml);
@@ -138,8 +140,9 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 					}
 
 					em.persist(od);
-					
-//					od = em.find(OrdenDespacho.class, od.getIdOrdenDespacho());
+
+					// od = em.find(OrdenDespacho.class,
+					// od.getIdOrdenDespacho());
 
 					// Envio a cada deposito la solicitud correspondiente
 					for (Solicitud s : od.getSolicitudes()) {
@@ -154,8 +157,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 							.println("No se genera la OrdenDespacho, ningun Articulo existente");
 				}
 			} else {
-				resultado = 
-				"<resultado> <estado>ERROR</estado> <mensaje>Error no encuentra el modulo correcto</mensaje> </resultado>";
+				resultado = "<resultado> <estado>ERROR</estado> <mensaje>Error no encuentra el modulo correcto</mensaje> </resultado>";
 				System.out.println(resultado);
 			}
 
@@ -171,8 +173,23 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	// Aca hay que mandar al deposito correspondiente al Articulo el pedido del
 	// mismo, con su cantidad
 
-	private void solicitarADeposito(Solicitud solicitud) {
+	private String solicitarADeposito(Solicitud solicitud) {
+		String result = "";
+		
+		//Mensaje a enviar
+		XStream xstream = new XStream();
+		SolicitudXML solXml = new SolicitudXML(solicitud);
+		xstream.ignoreUnknownElements();
+		xstream.alias("solicitudArticulos", SolicitudXML.class);
+		xstream.alias("articulo", ItemSolicitudXML.class);
 
+		String xml = xstream.toXML(solXml);
+		logger.info("Enviando al Deposito : "
+				+ solicitud.getItems().get(0).getArticulo().getModulo()
+						.getNombre());
+		logger.info("XML: " + xml);
+		
+		
 		// a que deposito
 		logger.info("Enviando solicitud a deposito");
 		String DEFAULT_CONNECTION_FACTORY = "jms/RemoteConnectionFactory";
@@ -200,7 +217,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				System.getProperty("username", DEFAULT_USERNAME));
 		env.put(Context.SECURITY_CREDENTIALS,
 				System.getProperty("password", DEFAULT_PASSWORD));
-		try {
+		/*try {
 			context = new InitialContext(env);
 
 			// Perform the JNDI lookups
@@ -226,25 +243,31 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			TextMessage message = session.createTextMessage();
 			// TODO: arreglar esta mierda que sigue...
 
-			XStream xstream = new XStream();
-			SolicitudXML solXml = new SolicitudXML(solicitud);
-			xstream.ignoreUnknownElements();
-			xstream.alias("solicitudArticulos", SolicitudXML.class);
-			xstream.alias("articulo", ItemSolicitudXML.class);
-
-			String xml = xstream.toXML(solXml);
-
+		
 			message.setText(xml);
 
 			producer.send(message);
 			connection.close();
+			result="OK";
+			return result;
 		} catch (JMSException e) {
-			logger.error("Error al enviar a deposito, JMSException");
+			result ="Error al enviar a deposito, JMSException";
+			logger.error(result);
 			e.printStackTrace();
+			return result;
+			
 		} catch (NamingException e) {
-			logger.error("Error al enviar a deposito, NamingException");
+			result = "Error al enviar a deposito, NamingException";
+			logger.error(result);
 			e.printStackTrace();
+			return result;
 		}
+		
+		*/
+		return result;
+		
+		
+		
 	}
 
 	private OrdenDespacho buscarODporSA(int idSolicitud) {
@@ -262,6 +285,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 	}
 
 	public RespuestaXML recibirArticulos(String jsonData) {
+		logger.info("Recibiendo stock para solicitud");
+		logger.info("JSON: "+jsonData);
 		RespuestaXML respuesta = new RespuestaXML();
 		try {
 			JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonData);
@@ -419,13 +444,16 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 		notificarEntregaDespacho ned = new notificarEntregaDespacho();
 		try {
 			String jsonData = ned.notificarEntregaDespachoLogistica(
-					od.getIdOrdenDespacho(), am.getModulo("logistica").getIp()+ Constantes.getRestEnviarNotiLog());
+					od.getIdOrdenDespacho(), am.getModulo("logistica").getIp()
+							+ Constantes.getRestEnviarNotiLog());
 			JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonData);
 			String estado = json.getString("estado");
 			String mensaje = json.getString("mensaje");
 			// Guardar en el log interno
-			logger.info("Notificar cambio de estado de OD a Logistica: " + String.valueOf(estado));
-			logger.info("Notificar cambio de estado de OD a Logistica: " + String.valueOf(mensaje));
+			logger.info("Notificar cambio de estado de OD a Logistica: "
+					+ String.valueOf(estado));
+			logger.info("Notificar cambio de estado de OD a Logistica: "
+					+ String.valueOf(mensaje));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("Error al notificar cambio de estado de OD a Logistica");
@@ -437,8 +465,10 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(
 					od.getNroVenta(), od.getModulo().getIp());
 			// Guardar en el log interno
-			logger.info("Notificar cambio de estado de OD a PortalWeb: " + respuesta.getEstado());
-			logger.info("Notificar cambio de estado de OD a PortalWeb: " + respuesta.getMensaje());
+			logger.info("Notificar cambio de estado de OD a PortalWeb: "
+					+ respuesta.getEstado());
+			logger.info("Notificar cambio de estado de OD a PortalWeb: "
+					+ respuesta.getMensaje());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("Error al notificar cambio de estado de OD a PortalWeb");
