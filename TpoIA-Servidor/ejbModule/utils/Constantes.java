@@ -8,7 +8,7 @@ public class Constantes {
 	final static String jmsEnviarADepUser = "test1";
 	final static String jmsEnviarADepPass = "test12341";
 	final static String restEnviarNotiLog = ":8080/LogisticaMonitoreoWEB/rest/LogisticaMonitoreo/notificarEntregaDespacho";
-	final static String wsEnviarNotiPortalWeb = ":8080/portalEstadoEntrega/ServidorEstadoEntregaBean";
+	final static String wsEnviarNotiPortalWeb = ":8080/portalEstadoEntrega/ServidorEstadoEntregaBeanService/ServidorEstadoEntregaBean";
 	
 	public static int getId() {
 		return id;
