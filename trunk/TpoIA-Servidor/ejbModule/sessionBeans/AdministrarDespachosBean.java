@@ -1,5 +1,6 @@
 package sessionBeans;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,10 +49,15 @@ import entities.ItemSolicitud;
 import entities.Modulo;
 import entities.OrdenDespacho;
 import entities.Solicitud;
+import servicesCaller.ServidorEstadoEntregaBean;
+import servicesCaller.ServidorEstadoEntregaBeanServiceLocator;
 //import org.hornetq.utils.json.JSONArray;
 //import org.hornetq.utils.json.JSONException;
 //import org.hornetq.utils.json.JSONObject;
 import servicesCaller.notificarEntregaDespacho;
+import servicesCaller2.NotificarEntregaDespacho;
+import servicesCaller2.ObjectFactory;
+import servicesCaller2.ServidorEstadoEntregaBeanService;
 
 /**
  * Session Bean implementation class Despacho
@@ -133,6 +139,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 					for (Modulo modulo : tabla.keySet()) {
 						Solicitud solicitud = new Solicitud();
+						solicitud.setEstado("Pendiente");
 						solicitud.agregarItemsSolicitudArticulo(tabla
 								.get(modulo));
 
@@ -175,8 +182,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 	private String solicitarADeposito(Solicitud solicitud) {
 		String result = "";
-		
-		//Mensaje a enviar
+
+		// Mensaje a enviar
 		XStream xstream = new XStream();
 		SolicitudXML solXml = new SolicitudXML(solicitud);
 		xstream.ignoreUnknownElements();
@@ -188,8 +195,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				+ solicitud.getItems().get(0).getArticulo().getModulo()
 						.getNombre());
 		logger.info("XML: " + xml);
-		
-		
+
 		// a que deposito
 		logger.info("Enviando solicitud a deposito");
 		String DEFAULT_CONNECTION_FACTORY = "jms/RemoteConnectionFactory";
@@ -217,7 +223,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 				System.getProperty("username", DEFAULT_USERNAME));
 		env.put(Context.SECURITY_CREDENTIALS,
 				System.getProperty("password", DEFAULT_PASSWORD));
-		/*try {
+
+		try {
 			context = new InitialContext(env);
 
 			// Perform the JNDI lookups
@@ -243,31 +250,27 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			TextMessage message = session.createTextMessage();
 			// TODO: arreglar esta mierda que sigue...
 
-		
 			message.setText(xml);
 
 			producer.send(message);
 			connection.close();
-			result="OK";
+			result = "OK";
 			return result;
 		} catch (JMSException e) {
-			result ="Error al enviar a deposito, JMSException";
+			result = "Error al enviar a deposito, JMSException";
 			logger.error(result);
 			e.printStackTrace();
 			return result;
-			
+
 		} catch (NamingException e) {
 			result = "Error al enviar a deposito, NamingException";
 			logger.error(result);
 			e.printStackTrace();
 			return result;
 		}
-		
-		*/
-		return result;
-		
-		
-		
+
+	
+
 	}
 
 	private OrdenDespacho buscarODporSA(int idSolicitud) {
@@ -286,7 +289,7 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 
 	public RespuestaXML recibirArticulos(String jsonData) {
 		logger.info("Recibiendo stock para solicitud");
-		logger.info("JSON: "+jsonData);
+		logger.info("JSON: " + jsonData);
 		RespuestaXML respuesta = new RespuestaXML();
 		try {
 			JSONObject json = (JSONObject) JSONSerializer.toJSON(jsonData);
@@ -393,6 +396,8 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 									odReady = false;
 									break;
 								}
+						if (odReady)
+							so.setEstado("Completada");
 					} else {
 						/*
 						 * Se recorren además las solicitudes que posee la OD,
@@ -452,28 +457,71 @@ public class AdministrarDespachosBean implements AdministrarDespachos {
 			// Guardar en el log interno
 			logger.info("Notificar cambio de estado de OD a Logistica: "
 					+ String.valueOf(estado));
+			if (estado.equals("ERROR"))
+				od.setEstadoEnvioLogistica("Pendiente");
+			else
+				od.setEstadoEnvioLogistica("ENVIADA");
 			logger.info("Notificar cambio de estado de OD a Logistica: "
 					+ String.valueOf(mensaje));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			logger.error("Error al notificar cambio de estado de OD a Logistica");
 			e.printStackTrace();
 		}
 
 		// Notificar Entrega a Portal Web
+		/*
+		 * try { RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(
+		 * od.getNroVenta(), od.getModulo().getIp()); // Guardar en el log
+		 * interno logger.info("Notificar cambio de estado de OD a PortalWeb: "
+		 * + respuesta.getEstado()); if(respuesta.getEstado().equals("ERROR"))
+		 * od.setEstadoEnvioPortal("Pendiente"); else
+		 * od.setEstadoEnvioPortal("ENVIADA");
+		 * logger.info("Notificar cambio de estado de OD a PortalWeb: " +
+		 * respuesta.getMensaje()); } catch (Exception e) {
+		 * logger.error("Error al notificar cambio de estado de OD a PortalWeb"
+		 * ); e.printStackTrace(); }
+		 */
+
+		// PRUEBA EMMA
 		try {
-			RespuestaXML respuesta = ned.notificarEntregaDespachoPortal(
-					od.getNroVenta(), od.getModulo().getIp());
-			// Guardar en el log interno
+			String direccion = "http://" + od.getModulo().getIp()
+					+ Constantes.getWsEnviarNotiPortalWeb();
+			URL url = new URL(direccion + "?wsdl");
+			ServidorEstadoEntregaBeanService servidor = new ServidorEstadoEntregaBeanService(
+					url);
+
+			servicesCaller2.ServidorEstadoEntregaBean seeb = servidor
+					.getServidorEstadoEntregaBeanPort();
+
+			String respuesta = seeb.notificarEntregaDespacho(od.getNroVenta());
+			// ServidorEstadoEntregaBeanServiceLocator serviceLocator = new
+			// ServidorEstadoEntregaBeanServiceLocator();
+			// serviceLocator.setServidorEstadoEntregaBeanPortEndpointAddress(direccion);
+
+			// ServidorEstadoEntregaBean service =
+			// serviceLocator.getServidorEstadoEntregaBeanPort();
+
+			logger.info("Recibiendo xml al notificarEntregaDespacho");
+			logger.info("XML: " + respuesta);
+			XStream xStream = new XStream();
+
+			xStream.processAnnotations(new Class[] { RespuestaXML.class });
+
+			RespuestaXML respuestaXml = (RespuestaXML) xStream
+					.fromXML(respuesta);
+			if (respuestaXml.getEstado().equals("ERROR"))
+				od.setEstadoEnvioPortal("Pendiente");
+			else
+				od.setEstadoEnvioPortal("ENVIADA");
 			logger.info("Notificar cambio de estado de OD a PortalWeb: "
-					+ respuesta.getEstado());
-			logger.info("Notificar cambio de estado de OD a PortalWeb: "
-					+ respuesta.getMensaje());
+					+ respuestaXml.getMensaje());
+
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			logger.error("Error al notificar cambio de estado de OD a PortalWeb");
-			e.printStackTrace();
+			logger.error("Error al recibir xml al notificarEntregaDespacho");
 		}
+		// FIN PRUEBA EMMA
+		em.merge(od);
 	}
 
 	@Override
