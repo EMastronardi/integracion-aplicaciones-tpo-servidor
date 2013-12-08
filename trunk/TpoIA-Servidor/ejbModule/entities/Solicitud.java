@@ -23,6 +23,16 @@ public class Solicitud {
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idSolicitud")
 	private List<ItemSolicitud> items;
+	
+	private String estado;
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
 
 	public void setItems(List<ItemSolicitud> items) {
 		this.items = items;
