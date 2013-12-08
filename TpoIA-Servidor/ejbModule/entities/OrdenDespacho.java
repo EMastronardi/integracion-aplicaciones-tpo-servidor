@@ -39,7 +39,26 @@ public class OrdenDespacho implements Serializable {
 	private List<Solicitud> solicitudes;
 	private String estado;
 	
+	private String estadoEnvioPortal;
+	private String estadoEnvioLogistica;
 	
+	
+	public String getEstadoEnvioPortal() {
+		return estadoEnvioPortal;
+	}
+
+	public void setEstadoEnvioPortal(String estadoEnvioPortal) {
+		this.estadoEnvioPortal = estadoEnvioPortal;
+	}
+
+	public String getEstadoEnvioLogistica() {
+		return estadoEnvioLogistica;
+	}
+
+	public void setEstadoEnvioLogistica(String estadoEnvioLogistica) {
+		this.estadoEnvioLogistica = estadoEnvioLogistica;
+	}
+
 	public OrdenDespacho() {
 		//Esto lo agrego EmmaT para solucionar el problema de id=0 cuando utilizabamos la OD dentro del mismo metodo que la generamos.
 		id = -1;
