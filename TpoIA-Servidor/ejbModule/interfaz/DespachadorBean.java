@@ -21,7 +21,7 @@ public class DespachadorBean implements Despachador {
 			return adminOD.procesarSolicitudDespacho(valorXml);
 
 		} catch (Exception e) {
-			return "Error al procesarOrdenDespacho";
+			return "<resultado> <estado>ERROR</estado> <mensaje>Error al procesar Despacho</mensaje> </resultado>";
 		}
 	}
 }
